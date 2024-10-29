@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'formRegister.dart';
+import '../Controller/getUser.dart';
+import '../Model/user.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -20,6 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
     'Réorientation',
     'Reconversion'
   ];
+
+  User userProfil = await getUser('encore@mail');
 
   @override
   void initState() {

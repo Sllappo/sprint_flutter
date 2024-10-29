@@ -8,7 +8,6 @@ import 'View/managementTests.dart';
 import 'View/showResults.dart';
 import 'View/quiz_page.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
         '/form/profil': (context) => const ProfilePage(),
       },
       home: const FormRegister(),
-
     );
   }
 }
