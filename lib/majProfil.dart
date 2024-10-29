@@ -28,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
-  final TextEditingController _motivationController = TextEditingController();
 
   String? _selectedOption;
   final List<String> _options = [
@@ -41,8 +40,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _selectedOption = _options[0];
-    _motivationController.text =
-        _selectedOption!; // Initialise le champ de motivation
   }
 
   @override
@@ -73,7 +70,6 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             TextField(
               controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'E-mail',
                 border: OutlineInputBorder(),
@@ -82,37 +78,37 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             TextField(
               controller: _ageController,
-              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Âge',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _showAddressDialog(context),
-              child: TextField(
-                controller: _adresseController,
-                decoration: const InputDecoration(
-                  labelText: 'Adresse Postale',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.edit),
+            TextField(
+              controller: _adresseController,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: 'Adresse Postale',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _showAddressDialog(context),
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => _showOptionDialog(context),
-              child: TextField(
-                controller:
-                    _motivationController, // Utilise le contrôleur pour motivation
-                decoration: const InputDecoration(
-                  labelText: 'Ma motivation',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.edit),
+            TextField(
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: 'Ma motivation',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  // lorsqu'on appui sur le crayon cela ouvre le showdialog
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _showOptionDialog(context),
                 ),
-                readOnly: true,
               ),
+              controller: TextEditingController(text: _selectedOption),
             ),
           ],
         ),
@@ -124,13 +120,13 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showAddressDialog(BuildContext context) {
     final TextEditingController _tempAddressController =
         TextEditingController();
-    _tempAddressController.text = _adresseController.text;
+    // _tempAddressController.text = _adresseController.text;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Modifier l\'Adresse Postale'),
+          title: const Text('Modifier mon adresse postale'),
           content: TextField(
             controller: _tempAddressController,
             decoration: const InputDecoration(
@@ -160,24 +156,29 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Dialog pour modifier l'option
+  // Dialog pour modifier la motivation avec menu déroulant
   void _showOptionDialog(BuildContext context) {
-    final TextEditingController _tempMotivationController =
-        TextEditingController(
-            text: _motivationController
-                .text); // Utiliser un contrôleur temporaire
+    String? tempSelectedOption = _selectedOption;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Modifier l\'Option'),
-          content: TextField(
-            controller: _tempMotivationController,
-            decoration: const InputDecoration(
-              labelText: 'Nouvelle Motivation',
-              border: OutlineInputBorder(),
-            ),
+          title: const Text('Modifier ma motivation'),
+          content: DropdownButton<String>(
+            value: tempSelectedOption,
+            isExpanded: true,
+            onChanged: (String? newValue) {
+              setState(() {
+                tempSelectedOption = newValue;
+              });
+            },
+            items: _options.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
           ),
           actions: <Widget>[
             TextButton(
@@ -190,12 +191,11 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 setState(() {
                   _selectedOption =
-                      _tempMotivationController.text; // Met à jour la sélection
-                  _motivationController.text =
-                      _selectedOption!; // Met à jour le champ
+                      tempSelectedOption; // Met à jour la sélection
                 });
                 Navigator.of(context).pop(); // Ferme le dialogue
               },
+              //lorsque j'appuie sur enregistrer l'option est sauvegarder dans _selectedOption
               child: const Text('Enregistrer'),
             ),
           ],
