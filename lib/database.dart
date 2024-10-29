@@ -4,8 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main( ){
   print("bonjour");
 Future<void> connectToDb() async {
-  //String? connectionString = dotenv.env['DATABASE_STRING'];
-  //var db = mdb.Db(connectionString!);
   var password = 'root';
   var encryptedPassword = Uri.encodeComponent(password);
 
