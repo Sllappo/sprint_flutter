@@ -7,6 +7,7 @@ import 'View/managementQuestions.dart';
 import 'View/managementTests.dart';
 import 'View/showResults.dart';
 import 'View/quiz_page.dart';
+import 'View/formLogin.dart';
 
 
 void main() {
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/form/register': (context) => const FormRegister(),
+        '/form/login': (context) => const FormLogin(),
         '/admin': (context) => const AdminCenter(),
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
         '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
       },
-      home: const FormRegister(),
+      home: const FormLogin(),
 
     );
   }
