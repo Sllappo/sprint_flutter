@@ -10,7 +10,11 @@ class User {
   final String password;
   final String motivation;
   final bool admin;
-
+  final List<Map<String, dynamic>> score;
+  final String java;
+  final String css;
+  final String html;
+  final String algo;
 
   User({
     required this.nom,
@@ -20,7 +24,12 @@ class User {
     required this.adresse,
     required this.password,
     required this.motivation,
-    required this.admin
+    required this.admin,
+    required this.score,
+    required this.java,
+    required this.css,
+    required this.html,
+    required this.algo,
   });
   Map<String, dynamic> toJson() => {
     "nom":nom,
