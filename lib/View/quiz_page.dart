@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../Models/candidate.dart';
-import '../Models/test.dart';
+import '../Model/candidate.dart';
+import '../Model/test.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sprint_flutter/View/majProfil.dart';
 import 'View/formRegister.dart';
 import 'View/adminCenter.dart';
 import 'View/managementQuestions.dart';
 import 'View/managementTests.dart';
 import 'View/showResults.dart';
-import 'Screens/quiz_page.dart';
+import 'View/quiz_page.dart';
 
 
 void main() {
@@ -26,12 +27,15 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
+        '/form/register': (context) => const FormRegister(),
         '/admin': (context) => const AdminCenter(),
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => const ShowResults(),
+        '/quiz': (context) => const QuizPage(),
+        '/form/profil': (context) => const ProfilePage(),
       },
-      home: const AdminCenter(),
+      home: const FormRegister(),
 
     );
   }

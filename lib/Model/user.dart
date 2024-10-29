@@ -11,6 +11,7 @@ class User {
   final String motivation;
   final bool admin;
 
+
   User({
     required this.nom,
     required this.prenom,
@@ -30,6 +31,12 @@ class User {
     "password":password,
     "motivation":motivation,
     "admin": false,
+    "score": [{
+      "java": "0",
+      "algo": "0",
+      "html": "0",
+      "css": "0",
+    }],
   };
 }
 
