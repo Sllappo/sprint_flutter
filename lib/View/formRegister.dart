@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../Controller/insertContact.dart';
+import '../Controller/emailVerification.dart';
 import '../Model/user.dart';
+
 class FormRegister extends StatefulWidget {
   const FormRegister({super.key});
 
@@ -27,17 +29,27 @@ class _FormRegisterState extends State<FormRegister> {
     'Réorientation'
   ];
 
-  // Fonction qui soumet le formulaire il se base par rapport au variable precedente
-  void _submitForm() {
+  // Fonction qui soumet le formulaire
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      final String email = _emailController.text;
+
+      // Vérifiez si l'email deja existant
+      bool emailAvailable = await isEmailAvailable(email);
+      if (!emailAvailable) {
+        print('Cet email est déjà utilisé. Veuillez en choisir un autre.');
+        return;
+      }
+
+      // variable dans tous les input
       final String nom = _nomController.text;
       final String prenom = _prenomController.text;
-      final String email = _emailController.text;
       final int? age = int.tryParse(_ageController.text);
       final String adresse = _adresseController.text;
       final String password = _passwordController.text;
       final String? motivation = _motivation;
 
+      // create new user a partir de la fonction et de la class
       User newUser = User(
         nom: nom,
         prenom: prenom,
@@ -48,16 +60,22 @@ class _FormRegisterState extends State<FormRegister> {
         motivation: motivation ?? '',
         admin: false,
       );
+
       try {
         insertUser(newUser);
         print('Inscription réussie pour $nom avec la motivation $_motivation');
-      }catch(e){
+      } catch (e) {
         print(e);
       }
     } else {
       print('Veuillez remplir tous les champs');
     }
   }
+
+
+  // Regex pour validation email et mot de passe
+  final RegExp emailRegex = RegExp(r".+@.+");
+  final RegExp passwordRegex = RegExp(r"^(?=.*[A-Z])(?=.*[!@#\$&*~]).{6,}$");
 
   // Validator sous chaque Label pour verifier si c'est vide ou si le type est respecter
   @override
@@ -111,6 +129,8 @@ class _FormRegisterState extends State<FormRegister> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer votre email';
+                  } else if (!emailRegex.hasMatch(value)) {
+                    return 'Veuillez entrer un email valide';
                   }
                   return null;
                 },
@@ -158,6 +178,8 @@ class _FormRegisterState extends State<FormRegister> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un mot de passe';
+                  } else if (!passwordRegex.hasMatch(value)) {
+                    return 'le mot de passe ne correspond pas aux normes';
                   }
                   return null;
                 },

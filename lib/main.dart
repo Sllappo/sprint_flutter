@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => const ShowResults(),
       },
-      home: const AdminCenter(),
+      home: const FormRegister(),
 
     );
   }
