@@ -59,7 +59,7 @@ class _FormRegisterState extends State<FormRegister> {
         password: password,
         motivation: motivation ?? '',
         admin: false,
-        score: [],
+        score: {},
         html: '',
         css: '',
         java: '',

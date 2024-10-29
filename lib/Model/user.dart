@@ -10,7 +10,7 @@ class User {
   final String password;
   final String motivation;
   final bool admin;
-  final List<Map<String, dynamic>> score;
+  final Map<String, dynamic> score;
   final String java;
   final String css;
   final String html;
@@ -40,12 +40,12 @@ class User {
     "password":password,
     "motivation":motivation,
     "admin": false,
-    "score": [{
+    "score": {
       "java": "0",
       "algo": "0",
       "html": "0",
       "css": "0",
-    }],
+    },
   };
 }
 
