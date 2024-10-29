@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
+  final TextEditingController _motivationController = TextEditingController();
 
   String? _selectedOption;
   final List<String> _options = [
@@ -40,6 +41,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _selectedOption = _options[0];
+    _motivationController.text =
+        _selectedOption!; // Initialise le champ de motivation
   }
 
   @override
@@ -87,8 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 10),
             GestureDetector(
-              onTap: () => _showAddressDialog(
-                  context), // Appel de la fonction de dialogue
+              onTap: () => _showAddressDialog(context),
               child: TextField(
                 controller: _adresseController,
                 decoration: const InputDecoration(
@@ -102,9 +104,10 @@ class _ProfilePageState extends State<ProfilePage> {
             GestureDetector(
               onTap: () => _showOptionDialog(context),
               child: TextField(
-                controller: TextEditingController(text: _selectedOption),
+                controller:
+                    _motivationController, // Utilise le contrôleur pour motivation
                 decoration: const InputDecoration(
-                  labelText: 'Mon option',
+                  labelText: 'Ma motivation',
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.edit),
                 ),
@@ -159,26 +162,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Dialog pour modifier l'option
   void _showOptionDialog(BuildContext context) {
-    String? selectedOption = _selectedOption; // Conserver la valeur actuelle
+    final TextEditingController _tempMotivationController =
+        TextEditingController(
+            text: _motivationController
+                .text); // Utiliser un contrôleur temporaire
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Modifier l\'Option'),
-          content: DropdownButtonFormField<String>(
-            value: selectedOption,
-            items: _options.map((String option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(option),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedOption = newValue; // Met à jour la sélection
-              });
-            },
+          content: TextField(
+            controller: _tempMotivationController,
+            decoration: const InputDecoration(
+              labelText: 'Nouvelle Motivation',
+              border: OutlineInputBorder(),
+            ),
           ),
           actions: <Widget>[
             TextButton(
@@ -191,9 +190,11 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 setState(() {
                   _selectedOption =
-                      selectedOption; // Enregistre la nouvelle option
+                      _tempMotivationController.text; // Met à jour la sélection
+                  _motivationController.text =
+                      _selectedOption!; // Met à jour le champ
                 });
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Ferme le dialogue
               },
               child: const Text('Enregistrer'),
             ),
