@@ -5,15 +5,16 @@ import 'View/adminCenter.dart';
 import 'View/managementQuestions.dart';
 import 'View/managementTests.dart';
 import 'View/showResults.dart';
+import 'Screens/quiz_page.dart';
 
-Future main() async {
+
+void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/admin/show-results': (context) => const ShowResults(),
       },
       home: const AdminCenter(),
+
     );
   }
 }
