@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import '../Controller/insertContact.dart';
+import '../Model/user.dart';
 class FormRegister extends StatefulWidget {
   const FormRegister({super.key});
 
@@ -37,9 +38,22 @@ class _FormRegisterState extends State<FormRegister> {
       final String password = _passwordController.text;
       final String? motivation = _motivation;
 
-      print('Inscription réussie pour $nom avec la motivation $_motivation');
-
-
+      User newUser = User(
+        nom: nom,
+        prenom: prenom,
+        email: email,
+        age: age,
+        adresse: adresse,
+        password: password,
+        motivation: motivation ?? '',
+        admin: false,
+      );
+      try {
+        insertUser(newUser);
+        print('Inscription réussie pour $nom avec la motivation $_motivation');
+      }catch(e){
+        print(e);
+      }
     } else {
       print('Veuillez remplir tous les champs');
     }

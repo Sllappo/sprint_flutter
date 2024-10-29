@@ -9,7 +9,7 @@ class User {
   final String adresse;
   final String password;
   final String motivation;
-  final Bool admin;
+  final bool admin;
 
   User({
     required this.nom,

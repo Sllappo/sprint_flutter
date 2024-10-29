@@ -6,7 +6,7 @@ Future<Db> connectToDb() async {
   var password = 'root';
   var encryptedPassword = Uri.encodeComponent(password);
 
-  var db = await Db.create('mongodb+srv://sllappo:$encryptedPassword@flutter.4y7dj.mongodb.net/?retryWrites=true&w=majority&appName=flutter');
+  var db = await Db.create('mongodb+srv://sllappo:$encryptedPassword@flutter.4y7dj.mongodb.net/sprintFlutter?retryWrites=true&w=majority&appName=flutter');
   try {
     await db.open();
     print('Connexion établie');
