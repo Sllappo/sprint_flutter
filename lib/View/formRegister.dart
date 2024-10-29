@@ -8,6 +8,9 @@ class FormRegister extends StatefulWidget {
 }
 
 class _FormRegisterState extends State<FormRegister> {
+  final _formKey = GlobalKey<FormState>();
+
+  // variable qui prend en compte les infos des inputs du form
   final TextEditingController _nomController = TextEditingController();
   final TextEditingController _prenomController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -15,6 +18,7 @@ class _FormRegisterState extends State<FormRegister> {
   final TextEditingController _adresseController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // list pour le menu deroulant
   String? _motivation;
   final List<String> _motivations = [
     'Poursuite d’étude',
@@ -22,22 +26,26 @@ class _FormRegisterState extends State<FormRegister> {
     'Réorientation'
   ];
 
+  // Fonction qui soumet le formulaire il se base par rapport au variable precedente
   void _submitForm() {
-    final String nom = _nomController.text;
-    final String prenom = _prenomController.text;
-    final String email = _emailController.text;
-    final int? age = int.tryParse(_ageController.text);
-    final String adresse = _adresseController.text;
-    final String password = _passwordController.text;
+    if (_formKey.currentState!.validate()) {
+      final String nom = _nomController.text;
+      final String prenom = _prenomController.text;
+      final String email = _emailController.text;
+      final int? age = int.tryParse(_ageController.text);
+      final String adresse = _adresseController.text;
+      final String password = _passwordController.text;
+      final String? motivation = _motivation;
 
-    if (nom.isNotEmpty && prenom.isNotEmpty && email.isNotEmpty &&
-        age != null && adresse.isNotEmpty && password.isNotEmpty && _motivation != null) {
       print('Inscription réussie pour $nom avec la motivation $_motivation');
+
+
     } else {
       print('Veuillez remplir tous les champs');
     }
   }
 
+  // Validator sous chaque Label pour verifier si c'est vide ou si le type est respecter
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,67 +54,134 @@ class _FormRegisterState extends State<FormRegister> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _nomController,
-              decoration: const InputDecoration(
-                labelText: 'Nom',
-                border: OutlineInputBorder(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _nomController,
+                decoration: const InputDecoration(
+                  labelText: 'Nom',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre nom';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _prenomController,
-              decoration: const InputDecoration(
-                labelText: 'Prénom',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _prenomController,
+                decoration: const InputDecoration(
+                  labelText: 'Prénom',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre prénom';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre email';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _ageController,
-              decoration: const InputDecoration(
-                labelText: 'Âge',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _ageController,
+                decoration: const InputDecoration(
+                  labelText: 'Âge',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre âge';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Veuillez entrer un âge valide';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _adresseController,
-              decoration: const InputDecoration(
-                labelText: 'Adresse Postale',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _adresseController,
+                decoration: const InputDecoration(
+                  labelText: 'Adresse Postale',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre adresse postale';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Mot de passe',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Mot de passe',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer un mot de passe';
+                  }
+                  return null;
+                },
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('S\'inscrire'),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Motivation',
+                  border: OutlineInputBorder(),
+                ),
+                value: _motivation,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _motivation = newValue;
+                  });
+                },
+                items: _motivations.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez sélectionner une motivation';
+                  }
+                  return null;
+                },
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _submitForm,
+                  child: const Text('S\'inscrire'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
