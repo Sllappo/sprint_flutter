@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class ManagementQuestions extends StatelessWidget {
   const ManagementQuestions({super.key});
+  final String tab = "HTML";
+
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +14,10 @@ class ManagementQuestions extends StatelessWidget {
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            NavBar(),
-
+            Text("aaa"),
+            NavBar(tab),
           ],
         ),
       ),
@@ -22,29 +25,29 @@ class ManagementQuestions extends StatelessWidget {
   }
 }
 
-Widget NavBar() {
+Widget NavBar(String tab) {
   final List<Map<String, dynamic>> buttons = [
-    { 'label': 'HTML' , 'onPressed': ()=>{} },
+    { 'label': 'HTML' , 'onPressed': () => {tab='HTML'} },
+    { 'label': 'CSS' , 'onPressed': () => {tab='CSS'} },
+    { 'label': 'Java' , 'onPressed': () => {tab='JAVA'} },
+    { 'label': 'Algo' , 'onPressed': () => {print(tab)} },
   ];
 
-  return ListView.builder(
-    itemCount: buttons.length,
-    itemBuilder: (context, index) {
-      final button = buttons[index];
-      return Column(
-        children: [
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: button['onPressed'],
-              child: Text(button['label']),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
+  // Utilisation d'une Column pour afficher les boutons
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: buttons.map((button) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+        child: ElevatedButton(
+          onPressed: button['onPressed'],
+          child: Text(button['label']),
+        ),
       );
-    },
+    }).toList(),
   );
+}
+
+Future<Widget> fetchQuizz() async {
+  return Text("Wsh");
 }
