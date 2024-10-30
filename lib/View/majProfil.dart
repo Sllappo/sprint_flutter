@@ -190,6 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Dialog pour modifier la motivation avec menu déroulant
   void _showOptionDialog(BuildContext context) {
+    // Initialisez avec la valeur actuelle de l'option sélectionnée
     String? tempSelectedOption = _selectedOption;
 
     showDialog(
@@ -198,7 +199,9 @@ class _ProfilePageState extends State<ProfilePage> {
         return AlertDialog(
           title: const Text('Modifier ma motivation'),
           content: DropdownButton<String>(
-            value: tempSelectedOption,
+            value: _options.contains(tempSelectedOption)
+                ? tempSelectedOption
+                : _options[0],
             isExpanded: true,
             onChanged: (String? newValue) {
               setState(() {
@@ -221,10 +224,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             ElevatedButton(
               onPressed: () {
+                updateUserMotivation(tempSelectedOption!);
                 setState(() {
                   _selectedOption =
                       tempSelectedOption; // Met à jour la sélection
                 });
+
+                // Appelez ici la fonction pour mettre à jour la motivation en base de données
+
                 Navigator.of(context).pop(); // Ferme le dialogue
               },
               child: const Text('Enregistrer'),
