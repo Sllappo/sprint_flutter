@@ -26,7 +26,7 @@ class Results {
       category: userResultMap['category'],
       score: userResultMap['score'],
       success: userResultMap['success'],
-      date: userResultMap['DateTime'],
+      date: DateTime.parse(userResultMap['DateTime']),
     );
   }
 }

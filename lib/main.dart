@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => ResultsPage(),
-        '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
       },
       onGenerateRoute: (settings) {
@@ -61,7 +60,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

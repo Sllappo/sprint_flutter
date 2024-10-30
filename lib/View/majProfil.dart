@@ -18,8 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
 
-  List<Results> userScores =
-      []; // Liste pour stocker les résultats de l'utilisateur
+  List<String> userScores =[]; // Liste pour stocker les résultats de l'utilisateur
+
   String? _selectedOption;
   final List<String> _options = [
     'Poursuite d\'études',
@@ -38,12 +38,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     try {
-      User? userProfil = await getUser('matteo@gmail.com');
-      List<Results> userScoresProfil =
-          await getAllUserScores("matteo@gmail.com");
+      User? userProfil = await getUser(userId);
+      userScores = await getAllUserScores(userId);
 
-      // Déboguer pour voir ce qui est retourné
-      print('Scores utilisateur chargés : $userScoresProfil');
+      print('Scores utilisateur chargés : $userScores');
 
       if (userProfil != null) {
         _nomController.text = userProfil.nom ?? '';
@@ -53,7 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
         _adresseController.text = userProfil.adresse ?? '';
         _selectedOption = userProfil.motivation ?? _options[0];
 
-        userScores = userScoresProfil; // Met à jour la liste des scores
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -154,17 +151,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 return Card(
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 5),
-                  child: ListTile(
-                    title: Text(
-                      'Catégorie: ${score.category}',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      'Score: ${score.score}',
+                  child: Text(
+                      'Score: ${score}',
                       style: TextStyle(fontSize: 14),
                     ),
-                  ),
                 );
               },
             ),
