@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../Controller/insertContact.dart';
 import '../Controller/emailVerification.dart';
 import '../Model/user.dart';
+import '../Model/candidate.dart';
+
 
 class FormRegister extends StatefulWidget {
   const FormRegister({super.key});
@@ -42,7 +44,7 @@ class _FormRegisterState extends State<FormRegister> {
         return;
       }
 
-      // variable dans tous les input
+      // Récupérez les valeurs du formulaire
       final String nom = _nomController.text;
       final String prenom = _prenomController.text;
       final int? age = int.tryParse(_ageController.text);
@@ -50,7 +52,7 @@ class _FormRegisterState extends State<FormRegister> {
       final String password = _passwordController.text;
       final String? motivation = _motivation;
 
-      // create new user a partir de la fonction et de la class
+      // Créez un nouvel utilisateur
       User newUser = User(
         nom: nom,
         prenom: prenom,
@@ -65,7 +67,12 @@ class _FormRegisterState extends State<FormRegister> {
       try {
         insertUser(newUser);
         print('Inscription réussie pour $nom avec la motivation $_motivation');
-        Navigator.pushReplacementNamed(context, '/form/profil'); // redirige page profil si il le try marche
+
+        // Créez un candidat basé sur l'utilisateur
+        Candidat candidat = Candidat(nom); // Utilisation correcte du constructeur
+
+        // Redirection vers la page de sélection de catégories avec le candidat
+        Navigator.pushReplacementNamed(context, '/categories', arguments: candidat);
       } catch (e) {
         print(e);
       }
@@ -73,8 +80,6 @@ class _FormRegisterState extends State<FormRegister> {
       print('Veuillez remplir tous les champs');
     }
   }
-
-
   // Regex pour validation email et mot de passe
   final RegExp emailRegex = RegExp(r".+@.+");
   final RegExp passwordRegex = RegExp(r"^(?=.*[A-Z])(?=.*[!@#\$&*~]).{6,}$");
@@ -219,6 +224,7 @@ class _FormRegisterState extends State<FormRegister> {
                     child: ElevatedButton(
                       onPressed: _submitForm,
                       child: const Text('S\'inscrire'),
+
                     ),
                   ),
                 ],

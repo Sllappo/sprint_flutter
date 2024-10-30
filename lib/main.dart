@@ -5,16 +5,21 @@ import 'View/formRegister.dart';
 import 'View/adminCenter.dart';
 import 'View/managementQuestions.dart';
 import 'View/managementTests.dart';
-import 'View/showResults.dart';
+import 'View/resultsPage.dart';
 import 'View/quiz_page.dart';
+import 'View/categorySelectionPage.dart';
+import 'Model/candidate.dart';
 import 'View/formLogin.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  // Instance de Candidat à utiliser dans les routes
+  final Candidat candidat = Candidat("Candidat");
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +30,37 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/form/login',
       routes: {
         '/form/register': (context) => const FormRegister(),
         '/form/login': (context) => const FormLogin(),
         '/admin': (context) => const AdminCenter(),
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
-        '/admin/show-results': (context) => const ShowResults(),
-        '/quiz': (context) => const QuizPage(),
+        '/admin/show-results': (context) => ResultsPage(),
         '/form/profil': (context) => const ProfilePage(),
       },
-      home: const FormLogin(),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/quiz') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => QuizPage(
+              category: args['category'],
+              candidat: args['candidat'],
+            ),
+          );
+        } else if (settings.name == '/categories') {
+          final Candidat candidat = settings.arguments as Candidat;
+          return MaterialPageRoute(
+            builder: (context) => CategorySelectionPage(candidat: candidat),
+          );
+        }
+        return null; // Retourne null si la route n'est pas gérée ici
+      },
     );
   }
 }
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -84,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
