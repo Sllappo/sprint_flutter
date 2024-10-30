@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 
-late String userId ;
+late String userId;
 
 class User {
   final String nom;

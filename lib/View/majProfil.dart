@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'formRegister.dart';
+// import 'formRegister.dart';
 import '../Controller/getUser.dart';
 import '../Model/user.dart';
+import '../Controller/updateProfil.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -29,31 +30,38 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     _selectedOption = _options[0];
 
-    // Appel de la fonction pour récupérer et afficher l'email dans le champ
-    displayConnectedUserEmail("utilisateur@example.com");
+    // Appel à la fonction pour récupérer les données utilisateur
+    _loadUserProfile();
   }
 
-  // Fonction pour récupérer l'email de l'utilisateur connecté et le mettre dans le champ
-  Future<void> displayConnectedUserEmail(String email) async {
-    final user = await getUser(email); // Récupérer l'utilisateur connecté
+  Future<void> _loadUserProfile() async {
+    try {
+      User? userProfil = await getUser('encore@mail');
 
-    if (user != null) {
-      setState(() {
-        _emailController.text = user.email; // Met à jour le champ d'email
-        _nomController.text = user.nom;
-        _prenomController.text = user.prenom;
-      });
-    } else {
-      print("Utilisateur non trouvé.");
+      // Déboguer pour voir ce qui est retourné
+      print('Profil utilisateur chargé : $userProfil');
+
+      if (userProfil != null) {
+        _nomController.text = userProfil.nom ?? '';
+        _prenomController.text = userProfil.prenom ?? '';
+        _emailController.text = userProfil.email ?? '';
+        _ageController.text = userProfil.age?.toString() ?? '';
+        _adresseController.text = userProfil.adresse ?? '';
+        _selectedOption = userProfil.motivation ?? _options[0];
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Aucun utilisateur trouvé avec cet e-mail.')),
+        );
+      }
+    } catch (e) {
+      // Gérer les erreurs
+      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du chargement du profil: $e')),
+      );
     }
   }
-  // User userProfil = await getUser('encore@mail');
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _selectedOption = _options[0];
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +124,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 labelText: 'Ma motivation',
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
-                  // lorsqu'on appui sur le crayon cela ouvre le showdialog
                   icon: const Icon(Icons.edit),
                   onPressed: () => _showOptionDialog(context),
                 ),
@@ -133,7 +140,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showAddressDialog(BuildContext context) {
     final TextEditingController _tempAddressController =
         TextEditingController();
-    // _tempAddressController.text = _adresseController.text;
 
     showDialog(
       context: context,
@@ -149,17 +155,30 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Ferme le dialogue
-              },
+              onPressed: () => Navigator.of(context).pop(), // Close the dialog
               child: const Text('Annuler'),
             ),
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _adresseController.text = _tempAddressController.text;
-                });
-                Navigator.of(context).pop(); // Ferme le dialogue
+              onPressed: () async {
+                try {
+                  // Call the updateUser function
+                  await updateUser(
+                      _adresseController.text, _tempAddressController.text);
+
+                  // Update the local state
+                  setState(() {
+                    _adresseController.text = _tempAddressController.text;
+                  });
+
+                  Navigator.of(context).pop(); // Close the dialog
+                } catch (e) {
+                  // Show error message if the update fails
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            'Erreur lors de la mise à jour de l\'adresse: $e')),
+                  );
+                }
               },
               child: const Text('Enregistrer'),
             ),
@@ -208,7 +227,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 });
                 Navigator.of(context).pop(); // Ferme le dialogue
               },
-              //lorsque j'appuie sur enregistrer l'option est sauvegarder dans _selectedOption
               child: const Text('Enregistrer'),
             ),
           ],

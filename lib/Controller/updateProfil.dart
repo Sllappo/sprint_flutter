@@ -1,6 +1,7 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../Model/user.dart';
 import '../database.dart';
+import '../Controller/getUser.dart';
 
 // fonction récupéré les données de l'utilisateur
 Future<void> updateUser(String adress, String newAdresse) async {
