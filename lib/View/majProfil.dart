@@ -17,7 +17,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
-
   List<String> userScores =[]; // Liste pour stocker les résultats de l'utilisateur
 
   String? _selectedOption;
@@ -31,7 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _selectedOption = _options[0];
-
     // Récuperation des données utilisateur et de ses scores
     _loadUserProfile();
   }
@@ -49,7 +47,6 @@ class _ProfilePageState extends State<ProfilePage> {
         userScores;
         print('Scores utilisateur chargés : $userScores');
       });
-
       if (userProfil != null) {
         _nomController.text = userProfil.nom ?? '';
         _prenomController.text = userProfil.prenom ?? '';
@@ -57,7 +54,6 @@ class _ProfilePageState extends State<ProfilePage> {
         _ageController.text = userProfil.age?.toString() ?? '';
         _adresseController.text = userProfil.adresse ?? '';
         _selectedOption = userProfil.motivation ?? _options[0];
-
       } else {
         //Affiche l'erreur dans une snackbar
         ScaffoldMessenger.of(context).showSnackBar(
@@ -66,6 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
     } catch (e) {
+      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
       //Affiche l'erreur dans une snackbar
       print('Erreur lors du chargement du profil : $e');
       ScaffoldMessenger.of(context).showSnackBar(

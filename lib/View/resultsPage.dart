@@ -22,7 +22,6 @@ class _ResultsPageState extends State<ResultsPage> {
     super.initState();
     getResultsAndName();
   }
-
   Future<void> getResultsAndName() async {
     var results = await getAllResults();
     var users = await getAllUsers();
@@ -55,7 +54,6 @@ class _ResultsPageState extends State<ResultsPage> {
     final years = {'Tous', ...resultsList.map((r) => r.date.year.toString())};
     final categories = {'Tous', ...resultsList.map((r) => r.category)};
     final prenoms = {'Tous', ...userNames.values.map((u) => u['prenom'] ?? '')};
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Tous les Résultats"),
