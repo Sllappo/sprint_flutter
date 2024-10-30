@@ -21,17 +21,28 @@ Future<User> getUser(String mail) async {
   return returnedUser;
 }
 
-Future<List<Results>> getAllUserScores(String candidateMail) async {
+Future<List<String>> getAllUserScores(String candidateMail) async {
   final db = await connectToDb();
   final collection = db.collection('results');
-
+  List<Results> resultsList=[];
+  List<String> userScores = [];
   try {
     // Récupérer tous les résultats pour l'adresse candidateMail spécifiée
     final results = await collection.find(where.eq('candidateMail', candidateMail)).toList();
-    print(results);
+    print("le result de l'appel a la bdd $results");
 
-    // Mapper les résultats vers une liste d'objets Results
-    return results.map((result) => Results.fromJson(result)).toList();
+    for(var object in results){
+      resultsList.add(Results.fromJson(object));
+    }
+  print('le resultat de resultlist $resultsList');
+   for(var result in resultsList){
+    var score = result.score;
+    var category = result.category;
+
+    userScores.add("$category: $score ");
+   }
+   print('les user scores sont $userScores');
+   return userScores;
   } catch (e) {
     // Gérer les erreurs ici
     print('Erreur lors de la récupération des scores: $e');
