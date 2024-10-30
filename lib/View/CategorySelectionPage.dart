@@ -36,7 +36,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                 MaterialPageRoute(
                   builder: (context) => QuizPage(
                     category: category,
-                    candidat: widget.candidat, // Passer le candidat ici
+                    candidat: widget.candidat,
                   ),
                 ),
               );

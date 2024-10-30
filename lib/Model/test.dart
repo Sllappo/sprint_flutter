@@ -1,7 +1,7 @@
 import 'candidate.dart';
 
 class Test {
-  final String id;  // Identifiant unique pour chaque test (peut-être généré automatiquement)
+  final String id;  // Id unique pour chaque test
   final String discipline;
   final List<Question> questions;
   int score = 0;
