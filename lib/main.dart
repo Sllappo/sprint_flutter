@@ -9,6 +9,7 @@ import 'View/showResults.dart';
 import 'View/quiz_page.dart';
 import 'View/categorySelectionPage.dart';
 import 'Model/candidate.dart';
+import 'View/formLogin.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/form/register': (context) => const FormRegister(),
+        '/form/login': (context) => const FormLogin(),
         '/admin': (context) => const AdminCenter(),
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/form/profil': (context) => const ProfilePage(),
         '/quiz': (context) => QuizPage(category: "JAVA", candidat: candidat),
       },
-      home: CategorySelectionPage(candidat: candidat),
+      home: const FormLogin(),
     );
   }
 }
