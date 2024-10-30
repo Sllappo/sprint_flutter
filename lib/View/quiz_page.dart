@@ -30,7 +30,6 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   List<Question> _loadQuestionsByCategory(String category) {
-    // La logique de sélection de question par catégorie
     switch (category) {
       case "HTML":
         return [
@@ -109,7 +108,7 @@ class _QuizPageState extends State<QuizPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Résultats"),
+        title: const Text("Résultats"),
         content: Text(
           "Score final pour ${widget.category}: ${test.score}/${test.questions.length}" +
               (allCategoriesCompleted ? "\nScore général : ${widget.candidat.scores.values.reduce((a, b) => a + b)}" : ""),
@@ -140,24 +139,50 @@ class _QuizPageState extends State<QuizPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Question ${currentQuestionIndex + 1}: ${question.enonce}"),
+            Text("Question ${currentQuestionIndex + 1}: ${question.enonce}",
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             for (int i = 0; i < question.options.length; i++)
-              ListTile(
-                title: Text(
-                  question.options[i],
-                  style: TextStyle(
-                    color: isAnswerSelected && i == question.bonneReponse
-                        ? Colors.green
-                        : isAnswerSelected && i != question.bonneReponse
-                        ? Colors.red
-                        : Colors.black,
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: InkWell(
+                  onTap: isAnswerSelected ? null : () => _answerQuestion(i),
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: isAnswerSelected
+                          ? (i == question.bonneReponse ? Colors.green.shade200 : Colors.red.shade200)
+                          : Colors.white,
+                    ),
+                    child: Center(  // Centrer le contenu de la carte
+                      child: Text(
+                        question.options[i],
+                        style: TextStyle(
+                          color: isAnswerSelected && i == question.bonneReponse
+                              ? Colors.green
+                              : isAnswerSelected && i != question.bonneReponse
+                              ? Colors.red
+                              : Colors.black,
+                        ),
+                        textAlign: TextAlign.center,  // Alignement centré
+                      ),
+                    ),
                   ),
                 ),
-                onTap: isAnswerSelected ? null : () => _answerQuestion(i),
               ),
             const SizedBox(height: 20),
-            Text("Temps restant: $remainingTime seconds"),
+            Text("Temps restant: $remainingTime secondes",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            LinearProgressIndicator(
+              value: remainingTime / test.questions[currentQuestionIndex].tempsLimite,
+              backgroundColor: Colors.grey.shade300,
+              color: Colors.teal,
+            ),
           ],
         ),
       ),

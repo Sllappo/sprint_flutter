@@ -18,6 +18,7 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
+  // Instance de Candidat à utiliser dans les routes
   final Candidat candidat = Candidat("Candidat");
 
   @override
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/form/login',
       routes: {
         '/form/register': (context) => const FormRegister(),
         '/form/login': (context) => const FormLogin(),
@@ -39,13 +40,28 @@ class MyApp extends StatelessWidget {
         '/admin/show-results': (context) => ResultsPage(),
         '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
-        '/quiz': (context) => QuizPage(category: "JAVA", candidat: candidat),
       },
-
-      home: const FormLogin(),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/quiz') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => QuizPage(
+              category: args['category'],
+              candidat: args['candidat'],
+            ),
+          );
+        } else if (settings.name == '/categories') {
+          final Candidat candidat = settings.arguments as Candidat;
+          return MaterialPageRoute(
+            builder: (context) => CategorySelectionPage(candidat: candidat),
+          );
+        }
+        return null; // Retourne null si la route n'est pas gérée ici
+      },
     );
   }
 }
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

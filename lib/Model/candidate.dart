@@ -17,7 +17,7 @@ class Candidat {
     final db = await connectToDb();
     final resultsCollection = db.collection('results');
 
-    bool success = score >= 5;
+    bool success = score >= 2;
 
     try {
       await resultsCollection.insertOne({
