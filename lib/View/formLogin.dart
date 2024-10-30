@@ -1,6 +1,8 @@
 // lib/View/FormLogin.dart
 import 'package:flutter/material.dart';
+import 'package:sprint_flutter/Controller/getUser.dart';
 import '../Controller/loginVerification.dart';
+import '../Model/user.dart';
 
 class FormLogin extends StatefulWidget {
   const FormLogin({super.key});
@@ -18,20 +20,33 @@ class _FormLoginState extends State<FormLogin> {
 
   // Soumission du formulaire
   void _submitLogin() async {
-    if (_formKey.currentState!.validate()) {
-      final String email = _emailController.text;
-      final String password = _passwordController.text;
+    print('Début de la fonction');
 
-      // on appel la fonction LoginUser qui renvoie Faux ou True si c'est True ça veut dire que le User existe
-      bool isLoggedIn = await loginUser(email, password);
+    //if (_formKey.currentState!.validate()) {
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
 
-      if (isLoggedIn) {
-        Navigator.pushReplacementNamed(context, '/form/profil'); // redirige page profil si il le if fonctionne
-        print('Connexion réussie pour $email');
+    print('On continue');
+
+    // on appel la fonction LoginUser qui renvoie Faux ou True si c'est True ça veut dire que le User existe
+    bool isLoggedIn = await loginUser(email, password);
+
+    print("Le user existe ? " + isLoggedIn.toString());
+
+    if (isLoggedIn) {
+      print('Connexion réussie pour $email');
+      final User currentUser = await getUser(email);
+      userId = currentUser.email;
+      print(userId);
+      if (currentUser.admin){
+        Navigator.pushReplacementNamed(context, '/admin'); // Redirige vers la page admin
       } else {
-        print('Email ou mot de passe incorrect');
+        Navigator.pushReplacementNamed(context, '/form/profil'); // Redirige vers la page profil
       }
+    } else {
+      print('Email ou mot de passe incorrect');
     }
+    //}
   }
   // Le form
   @override

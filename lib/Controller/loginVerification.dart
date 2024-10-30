@@ -3,7 +3,10 @@ import '../database.dart';
 
 // fonction Login User
 Future<bool> loginUser(String email, String password) async {
+  print("Connexion ...");
   final db = await connectToDb();  // lance la Bdd grace a la fonction connectTodb
+
+  print("Récupération des users ...");
   final collection = db.collection('users');  // recupére toute les infos de Users
 
   final user = await collection.findOne({

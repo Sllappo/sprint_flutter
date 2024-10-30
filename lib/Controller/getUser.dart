@@ -21,7 +21,6 @@ Future<User> getUser(String mail) async {
   return returnedUser;
 }
 
-
 Future<List<Results>> getAllUserScores(String candidateMail) async {
   final db = await connectToDb();
   final collection = db.collection('results');
@@ -39,4 +38,3 @@ Future<List<Results>> getAllUserScores(String candidateMail) async {
     return []; // Retourner une liste vide en cas d'erreur
   }
 }
-
