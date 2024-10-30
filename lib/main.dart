@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/form/login',
+      initialRoute: '/admin/show-results',
       routes: {
         '/form/register': (context) => const FormRegister(),
         '/form/login': (context) => const FormLogin(),
@@ -38,7 +38,6 @@ class MyApp extends StatelessWidget {
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => ResultsPage(),
-        '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
       },
       onGenerateRoute: (settings) {
