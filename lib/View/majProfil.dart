@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'formRegister.dart';
 import '../Controller/getUser.dart';
 import '../Model/user.dart';
 import '../Controller/updateProfil.dart';
+import '../Model/results.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -18,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
 
+  List<Results> userScores =
+      []; // Liste pour stocker les résultats de l'utilisateur
   String? _selectedOption;
   final List<String> _options = [
     'Poursuite d\'études',
@@ -36,10 +38,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     try {
-      User? userProfil = await getUser('encore@mail');
+      User? userProfil = await getUser('matteo@gmail.com');
+      List<Results> userScoresProfil =
+          await getAllUserScores("matteo@gmail.com");
 
       // Déboguer pour voir ce qui est retourné
-      print('Profil utilisateur chargé : $userProfil');
+      print('Scores utilisateur chargés : $userScoresProfil');
 
       if (userProfil != null) {
         _nomController.text = userProfil.nom ?? '';
@@ -48,6 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
         _ageController.text = userProfil.age?.toString() ?? '';
         _adresseController.text = userProfil.adresse ?? '';
         _selectedOption = userProfil.motivation ?? _options[0];
+
+        userScores = userScoresProfil; // Met à jour la liste des scores
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -130,6 +136,39 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               controller: TextEditingController(text: _selectedOption),
             ),
+            const SizedBox(height: 20),
+            // Afficher les scores avec une meilleure présentation
+            Text(
+              'Vos scores :',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            // Utiliser une liste pour afficher les scores
+            ListView.builder(
+              shrinkWrap: true,
+              physics:
+                  const NeverScrollableScrollPhysics(), // Pour éviter le défilement de la liste imbriquée
+              itemCount: userScores.length,
+              itemBuilder: (context, index) {
+                final score = userScores[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  child: ListTile(
+                    title: Text(
+                      'Catégorie: ${score.category}',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'Score: ${score.score}',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -155,24 +194,25 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Close the dialog
+              onPressed: () =>
+                  Navigator.of(context).pop(), // Fermer le dialogue
               child: const Text('Annuler'),
             ),
             ElevatedButton(
               onPressed: () async {
                 try {
-                  // Call the updateUser function
+                  // Appeler la fonction pour mettre à jour l'utilisateur
                   await updateUser(
                       _adresseController.text, _tempAddressController.text);
 
-                  // Update the local state
+                  // Mettre à jour l'état local
                   setState(() {
                     _adresseController.text = _tempAddressController.text;
                   });
 
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); // Fermer le dialogue
                 } catch (e) {
-                  // Show error message if the update fails
+                  // Afficher un message d'erreur si la mise à jour échoue
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
@@ -218,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Ferme le dialogue
+                Navigator.of(context).pop(); // Fermer le dialogue
               },
               child: const Text('Annuler'),
             ),
@@ -232,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 // Appelez ici la fonction pour mettre à jour la motivation en base de données
 
-                Navigator.of(context).pop(); // Ferme le dialogue
+                Navigator.of(context).pop(); // Fermer le dialogue
               },
               child: const Text('Enregistrer'),
             ),

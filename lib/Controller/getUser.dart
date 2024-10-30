@@ -1,6 +1,7 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../Model/user.dart';
 import '../database.dart';
+import '../Model/results.dart';
 
 // fonction récupéré les données de l'utilisateur
 Future<User> getUser(String mail) async {
@@ -19,3 +20,23 @@ Future<User> getUser(String mail) async {
 
   return returnedUser;
 }
+
+
+Future<List<Results>> getAllUserScores(String candidateMail) async {
+  final db = await connectToDb();
+  final collection = db.collection('results');
+
+  try {
+    // Récupérer tous les résultats pour l'adresse candidateMail spécifiée
+    final results = await collection.find(where.eq('candidateMail', candidateMail)).toList();
+    print(results);
+
+    // Mapper les résultats vers une liste d'objets Results
+    return results.map((result) => Results.fromJson(result)).toList();
+  } catch (e) {
+    // Gérer les erreurs ici
+    print('Erreur lors de la récupération des scores: $e');
+    return []; // Retourner une liste vide en cas d'erreur
+  }
+}
+
