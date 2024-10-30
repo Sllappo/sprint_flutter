@@ -21,11 +21,6 @@ Future<List<User>> getUsers() async {
       password: userJson['password'],
       motivation: userJson['motivation'],
       admin: userJson['admin'],
-      score: userJson['score'],
-      java: userJson['java'],
-      css: userJson['css'],
-      html: userJson['html'],
-      algo: userJson['algo'],
     );
   }).toList();
 

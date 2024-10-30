@@ -12,11 +12,6 @@ class User {
   final String password;
   final String motivation;
   final bool admin;
-  final Map<String, dynamic> score;
-  final String java;
-  final String css;
-  final String html;
-  final String algo;
 
   User({
     required this.nom,
@@ -27,11 +22,6 @@ class User {
     required this.password,
     required this.motivation,
     required this.admin,
-    required this.score,
-    required this.java,
-    required this.css,
-    required this.html,
-    required this.algo,
   });
   Map<String, dynamic> toJson() => {
         "nom": nom,
@@ -42,12 +32,6 @@ class User {
         "password": password,
         "motivation": motivation,
         "admin": false,
-        "score": {
-          "java": "0",
-          "algo": "0",
-          "html": "0",
-          "css": "0",
-        },
       };
 
   factory User.fromJson(Map<String, dynamic> userMap) {
@@ -60,11 +44,6 @@ class User {
       password: userMap['password'],
       motivation: userMap['motivation'],
       admin: userMap['admin'],
-      score: Map<String, dynamic>.from(userMap['score']),
-      java: userMap['score']['java'] ?? '0',
-      css: userMap['score']['css'] ?? '0',
-      html: userMap['score']['html'] ?? '0',
-      algo: userMap['score']['algo'] ?? '0',
     );
   }
 }
