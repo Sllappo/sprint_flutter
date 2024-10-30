@@ -33,6 +33,7 @@ class _FormRegisterState extends State<FormRegister> {
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final String email = _emailController.text;
+      userId= email;
 
       // Vérifiez si l'email deja existant
       bool emailAvailable = await isEmailAvailable(email);

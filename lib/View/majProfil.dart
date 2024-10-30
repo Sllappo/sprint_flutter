@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'formRegister.dart';
 import '../Controller/getUser.dart';
 import '../Model/user.dart';
+import '../Controller/updateProfil.dart';
+import '../Model/results.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -17,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
 
+  List<Results> userScores =
+      []; // Liste pour stocker les résultats de l'utilisateur
   String? _selectedOption;
   final List<String> _options = [
     'Poursuite d\'études',
@@ -29,31 +32,42 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     _selectedOption = _options[0];
 
-    // Appel de la fonction pour récupérer et afficher l'email dans le champ
-    displayConnectedUserEmail("utilisateur@example.com");
+    // Appel à la fonction pour récupérer les données utilisateur
+    _loadUserProfile();
   }
 
-  // Fonction pour récupérer l'email de l'utilisateur connecté et le mettre dans le champ
-  Future<void> displayConnectedUserEmail(String email) async {
-    final user = await getUser(email); // Récupérer l'utilisateur connecté
+  Future<void> _loadUserProfile() async {
+    try {
+      User? userProfil = await getUser('matteo@gmail.com');
+      List<Results> userScoresProfil =
+          await getAllUserScores("matteo@gmail.com");
 
-    if (user != null) {
-      setState(() {
-        _emailController.text = user.email; // Met à jour le champ d'email
-        _nomController.text = user.nom;
-        _prenomController.text = user.prenom;
-      });
-    } else {
-      print("Utilisateur non trouvé.");
+      // Déboguer pour voir ce qui est retourné
+      print('Scores utilisateur chargés : $userScoresProfil');
+
+      if (userProfil != null) {
+        _nomController.text = userProfil.nom ?? '';
+        _prenomController.text = userProfil.prenom ?? '';
+        _emailController.text = userProfil.email ?? '';
+        _ageController.text = userProfil.age?.toString() ?? '';
+        _adresseController.text = userProfil.adresse ?? '';
+        _selectedOption = userProfil.motivation ?? _options[0];
+
+        userScores = userScoresProfil; // Met à jour la liste des scores
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Aucun utilisateur trouvé avec cet e-mail.')),
+        );
+      }
+    } catch (e) {
+      // Gérer les erreurs
+      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du chargement du profil: $e')),
+      );
     }
   }
-  // User userProfil = await getUser('encore@mail');
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _selectedOption = _options[0];
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,13 +130,45 @@ class _ProfilePageState extends State<ProfilePage> {
                 labelText: 'Ma motivation',
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
-                  // lorsqu'on appui sur le crayon cela ouvre le showdialog
                   icon: const Icon(Icons.edit),
                   onPressed: () => _showOptionDialog(context),
                 ),
               ),
               controller: TextEditingController(text: _selectedOption),
             ),
+            const SizedBox(height: 20),
+            // Afficher les scores avec une meilleure présentation
+            Text(
+              'Vos scores :',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            // Utiliser une liste pour afficher les scores
+            ListView.builder(
+              shrinkWrap: true,
+              physics:
+                  const NeverScrollableScrollPhysics(), // Pour éviter le défilement de la liste imbriquée
+              itemCount: userScores.length,
+              itemBuilder: (context, index) {
+                final score = userScores[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  child: ListTile(
+                    title: Text(
+                      'Catégorie: ${score.category}',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'Score: ${score.score}',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -133,7 +179,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showAddressDialog(BuildContext context) {
     final TextEditingController _tempAddressController =
         TextEditingController();
-    // _tempAddressController.text = _adresseController.text;
 
     showDialog(
       context: context,
@@ -149,17 +194,31 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Ferme le dialogue
-              },
+              onPressed: () =>
+                  Navigator.of(context).pop(), // Fermer le dialogue
               child: const Text('Annuler'),
             ),
             ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _adresseController.text = _tempAddressController.text;
-                });
-                Navigator.of(context).pop(); // Ferme le dialogue
+              onPressed: () async {
+                try {
+                  // Appeler la fonction pour mettre à jour l'utilisateur
+                  await updateUser(
+                      _adresseController.text, _tempAddressController.text);
+
+                  // Mettre à jour l'état local
+                  setState(() {
+                    _adresseController.text = _tempAddressController.text;
+                  });
+
+                  Navigator.of(context).pop(); // Fermer le dialogue
+                } catch (e) {
+                  // Afficher un message d'erreur si la mise à jour échoue
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            'Erreur lors de la mise à jour de l\'adresse: $e')),
+                  );
+                }
               },
               child: const Text('Enregistrer'),
             ),
@@ -171,6 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Dialog pour modifier la motivation avec menu déroulant
   void _showOptionDialog(BuildContext context) {
+    // Initialisez avec la valeur actuelle de l'option sélectionnée
     String? tempSelectedOption = _selectedOption;
 
     showDialog(
@@ -179,7 +239,9 @@ class _ProfilePageState extends State<ProfilePage> {
         return AlertDialog(
           title: const Text('Modifier ma motivation'),
           content: DropdownButton<String>(
-            value: tempSelectedOption,
+            value: _options.contains(tempSelectedOption)
+                ? tempSelectedOption
+                : _options[0],
             isExpanded: true,
             onChanged: (String? newValue) {
               setState(() {
@@ -196,19 +258,22 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Ferme le dialogue
+                Navigator.of(context).pop(); // Fermer le dialogue
               },
               child: const Text('Annuler'),
             ),
             ElevatedButton(
               onPressed: () {
+                updateUserMotivation(tempSelectedOption!);
                 setState(() {
                   _selectedOption =
                       tempSelectedOption; // Met à jour la sélection
                 });
-                Navigator.of(context).pop(); // Ferme le dialogue
+
+                // Appelez ici la fonction pour mettre à jour la motivation en base de données
+
+                Navigator.of(context).pop(); // Fermer le dialogue
               },
-              //lorsque j'appuie sur enregistrer l'option est sauvegarder dans _selectedOption
               child: const Text('Enregistrer'),
             ),
           ],
