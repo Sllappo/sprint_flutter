@@ -24,13 +24,36 @@ class _ProfilePageState extends State<ProfilePage> {
     'Reconversion'
   ];
 
-  User userProfil = await getUser('encore@mail');
-
   @override
   void initState() {
     super.initState();
     _selectedOption = _options[0];
+
+    // Appel de la fonction pour récupérer et afficher l'email dans le champ
+    displayConnectedUserEmail("utilisateur@example.com");
   }
+
+  // Fonction pour récupérer l'email de l'utilisateur connecté et le mettre dans le champ
+  Future<void> displayConnectedUserEmail(String email) async {
+    final user = await getUser(email); // Récupérer l'utilisateur connecté
+
+    if (user != null) {
+      setState(() {
+        _emailController.text = user.email; // Met à jour le champ d'email
+        _nomController.text = user.nom;
+        _prenomController.text = user.prenom;
+      });
+    } else {
+      print("Utilisateur non trouvé.");
+    }
+  }
+  // User userProfil = await getUser('encore@mail');
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _selectedOption = _options[0];
+  // }
 
   @override
   Widget build(BuildContext context) {

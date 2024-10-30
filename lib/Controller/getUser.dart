@@ -14,5 +14,9 @@ Future<User> getUser(String mail) async {
 
   await db.close();
 
+  if (userGet != null) {
+    return User.fromJson(userGet); // Retourner l'instance `User` si trouvée
+  }
+
   return returnedUser;
 }
