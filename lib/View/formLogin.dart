@@ -1,6 +1,7 @@
-// lib/View/FormLogin.dart
 import 'package:flutter/material.dart';
 import '../Controller/loginVerification.dart';
+import 'categorySelectionPage.dart';
+import '../Model/candidate.dart';
 
 class FormLogin extends StatefulWidget {
   const FormLogin({super.key});
@@ -12,28 +13,30 @@ class FormLogin extends StatefulWidget {
 class _FormLoginState extends State<FormLogin> {
   final _formKey = GlobalKey<FormState>();
 
-  // Variable des données des inputs
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // Soumission du formulaire
   void _submitLogin() async {
     if (_formKey.currentState!.validate()) {
       final String email = _emailController.text;
       final String password = _passwordController.text;
 
-      // on appel la fonction LoginUser qui renvoie Faux ou True si c'est True ça veut dire que le User existe
       bool isLoggedIn = await loginUser(email, password);
 
       if (isLoggedIn) {
-        Navigator.pushReplacementNamed(context, '/form/profil'); // redirige page profil si il le if fonctionne
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategorySelectionPage(candidat: Candidat(email)),
+          ),
+        );
         print('Connexion réussie pour $email');
       } else {
         print('Email ou mot de passe incorrect');
       }
     }
   }
-  // Le form
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
