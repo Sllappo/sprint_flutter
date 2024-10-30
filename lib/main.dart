@@ -7,14 +7,17 @@ import 'View/managementQuestions.dart';
 import 'View/managementTests.dart';
 import 'View/showResults.dart';
 import 'View/quiz_page.dart';
-
+import 'View/categorySelectionPage.dart';
+import 'Model/candidate.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final Candidat candidat = Candidat("Candidat");
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +35,10 @@ class MyApp extends StatelessWidget {
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => const ShowResults(),
-        '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
+        '/quiz': (context) => QuizPage(category: "JAVA", candidat: candidat),
       },
-      home: const FormRegister(),
-
+      home: CategorySelectionPage(candidat: candidat),
     );
   }
 }
@@ -84,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
