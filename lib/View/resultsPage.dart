@@ -9,10 +9,12 @@ class ResultsPage extends StatefulWidget {
 }
 
 class _ResultsPageState extends State<ResultsPage> {
+  // je créer deux liste de resultat une avec tous les resultats une qui va etre trier
   List<Results> resultsList = [];
-  List<Results> filteredResultsList = []; // Liste filtrée
-  Map<String, Map<String, String>> userNames = {};
+  List<Results> filteredResultsList = [];
+  Map<String, Map<String, String>> userNames = {};// + une map avec tous les users
 
+  // pour le dropDown par defaut ca sera a tous
   String selectedYear = 'Tous';
   String selectedCategory = 'Tous';
   String selectedPrenom = 'Tous';
@@ -22,7 +24,7 @@ class _ResultsPageState extends State<ResultsPage> {
     super.initState();
     getResultsAndName();
   }
-
+// je recupére tout les resultats et pareil pour les emails et a partir des emails je recupere les prenoms
   Future<void> getResultsAndName() async {
     var results = await getAllResults();
     var users = await getAllUsers();
@@ -33,13 +35,14 @@ class _ResultsPageState extends State<ResultsPage> {
       };
     }
     setState(() {
-      resultsList = results;
-      filteredResultsList = results; // Initialement, tous les résultats sont affichés
+      resultsList = results; // j'initialise les deux list au resultat pour l'instant
+      filteredResultsList = results;
     });
   }
 
   void applyFilter() {
     setState(() {
+      // permet de filtrer la list en fonction de la donnée dans la dropDown
       filteredResultsList = resultsList.where((result) {
         final yearMatch = selectedYear == 'Tous' || result.date.year.toString() == selectedYear;
         final categoryMatch = selectedCategory == 'Tous' || result.category == selectedCategory;
@@ -51,10 +54,10 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Créer les options de filtrage
-    final years = {'Tous', ...resultsList.map((r) => r.date.year.toString())};
-    final categories = {'Tous', ...resultsList.map((r) => r.category)};
-    final prenoms = {'Tous', ...userNames.values.map((u) => u['prenom'] ?? '')};
+    // Creer des maps composer de "Tous" et l'entierter des category + User
+    final years = {'Tous', ...resultsList.map((result) => result.date.year.toString())};
+    final categories = {'Tous', ...resultsList.map((category) => category.category)};
+    final prenoms = {'Tous', ...userNames.values.map((user) => user['prenom'] ?? '')};
 
     return Scaffold(
       appBar: AppBar(
@@ -62,10 +65,11 @@ class _ResultsPageState extends State<ResultsPage> {
       ),
       body: Column(
         children: [
-          // Filtres
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // dans les dropDown la valeur par defaut est "Tous" mais change en fonction
+              //du choix de l'admin grâce au Onchaned plus bas
               DropdownButton<String>(
                 value: selectedYear,
                 items: years.map((year) {
@@ -113,7 +117,6 @@ class _ResultsPageState extends State<ResultsPage> {
               ),
             ],
           ),
-          // Liste de résultats
           Expanded(
             child: filteredResultsList.isEmpty
                 ? Center(child: CircularProgressIndicator())
@@ -124,13 +127,14 @@ class _ResultsPageState extends State<ResultsPage> {
                 final userInfo = userNames[result.candidateMail];
                 final nom = userInfo?['nom'] ?? 'Inconnu';
                 final prenom = userInfo?['prenom'] ?? '';
-
+                // juste la maniere d'afficher avec titre + sous titre
                 return ListTile(
                   title: Text(result.category),
                   subtitle: Text(
                     "Candidat: $nom $prenom\n"
                         "Score: ${result.score} - Succès: ${result.success ? "Oui" : "Non"}",
                   ),
+                  //trailing permet de mettre a droite une variate de subtile etc
                   trailing: Text(result.date.toLocal().toString().split(' ')[0]),
                 );
               },
