@@ -9,7 +9,6 @@ import 'View/showResults.dart';
 import 'View/quiz_page.dart';
 import 'View/formLogin.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -37,8 +36,7 @@ class MyApp extends StatelessWidget {
         '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
       },
-      home: const FormLogin(),
-
+      home: const ProfilePage(),
     );
   }
 }

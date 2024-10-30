@@ -6,7 +6,7 @@ late String userId ;
 class User {
   final String nom;
   final String prenom;
-  final String email ;
+  final String email;
   final int? age;
   final String adresse;
   final String password;
@@ -34,20 +34,37 @@ class User {
     required this.algo,
   });
   Map<String, dynamic> toJson() => {
-    "nom":nom,
-    "prenom":prenom,
-    "email":email,
-    "age":age,
-    "adresse":adresse,
-    "password":password,
-    "motivation":motivation,
-    "admin": false,
-    "score": {
-      "java": "0",
-      "algo": "0",
-      "html": "0",
-      "css": "0",
-    },
-  };
-}
+        "nom": nom,
+        "prenom": prenom,
+        "email": email,
+        "age": age,
+        "adresse": adresse,
+        "password": password,
+        "motivation": motivation,
+        "admin": false,
+        "score": {
+          "java": "0",
+          "algo": "0",
+          "html": "0",
+          "css": "0",
+        },
+      };
 
+  factory User.fromJson(Map<String, dynamic> userMap) {
+    return User(
+      nom: userMap['nom'],
+      prenom: userMap['prenom'],
+      email: userMap['email'],
+      age: userMap['age'],
+      adresse: userMap['adresse'],
+      password: userMap['password'],
+      motivation: userMap['motivation'],
+      admin: userMap['admin'],
+      score: Map<String, dynamic>.from(userMap['score']),
+      java: userMap['score']['java'] ?? '0',
+      css: userMap['score']['css'] ?? '0',
+      html: userMap['score']['html'] ?? '0',
+      algo: userMap['score']['algo'] ?? '0',
+    );
+  }
+}
