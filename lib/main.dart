@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         '/form/profil': (context) => const ProfilePage(),
         '/quiz': (context) => QuizPage(category: "JAVA", candidat: candidat),
       },
-      home: const FormLogin(),
+      home: const ProfilePage(),
     );
   }
 }
