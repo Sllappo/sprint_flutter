@@ -22,11 +22,11 @@ class Results {
 
   factory Results.fromJson(Map<String, dynamic> userResultMap) {
     return Results(
-      candidateMail: userResultMap['candidateMail'],
-      category: userResultMap['category'],
-      score: userResultMap['score'],
-      success: userResultMap['success'],
-      date: DateTime.parse(userResultMap['DateTime']),
+      candidateMail: userResultMap['candidateMail'] ?? '',
+      category: userResultMap['category'] ?? 'Unknown',
+      score: userResultMap['score'] ?? 0,
+      success: userResultMap['success'] ?? false,
+      date: DateTime.tryParse(userResultMap['date']?.toString() ?? '') ?? DateTime.now(),
     );
   }
 }

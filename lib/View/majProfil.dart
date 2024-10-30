@@ -32,16 +32,23 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     _selectedOption = _options[0];
 
-    // Appel à la fonction pour récupérer les données utilisateur
+    // Récuperation des données utilisateur et de ses scores
     _loadUserProfile();
   }
 
   Future<void> _loadUserProfile() async {
+    //Fonction permettant de récupérer les données de l'utilisateur ainsi que ses résultats
     try {
-      User? userProfil = await getUser(userId);
-      userScores = await getAllUserScores(userId);
+      User? userProfil = await getUser(userId);//on récupère les données de l'utilisateur connecté
+      userScores = await getAllUserScores(userId);//on récupère les résultats de l'utilisateur connecté
 
       print('Scores utilisateur chargés : $userScores');
+
+      setState(() {
+        //On met à jour l'état de userScore sinon l'affichage des scores ne se fait pas
+        userScores;
+        print('Scores utilisateur chargés : $userScores');
+      });
 
       if (userProfil != null) {
         _nomController.text = userProfil.nom ?? '';
@@ -52,14 +59,15 @@ class _ProfilePageState extends State<ProfilePage> {
         _selectedOption = userProfil.motivation ?? _options[0];
 
       } else {
+        //Affiche l'erreur dans une snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Aucun utilisateur trouvé avec cet e-mail.')),
         );
       }
     } catch (e) {
-      // Gérer les erreurs
-      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
+      //Affiche l'erreur dans une snackbar
+      print('Erreur lors du chargement du profil : $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur lors du chargement du profil: $e')),
       );
@@ -78,6 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             TextField(
               controller: _nomController,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Nom',
                 border: OutlineInputBorder(),
@@ -86,6 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             TextField(
               controller: _prenomController,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Prénom',
                 border: OutlineInputBorder(),
@@ -94,6 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             TextField(
               controller: _emailController,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'E-mail',
                 border: OutlineInputBorder(),
@@ -102,6 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             TextField(
               controller: _ageController,
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Âge',
                 border: OutlineInputBorder(),
@@ -142,9 +154,9 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             // Utiliser une liste pour afficher les scores
             ListView.builder(
-              shrinkWrap: true,
+              shrinkWrap: true,//les dimensions de la liste dépende du nombre d'éléments à afficher
               physics:
-                  const NeverScrollableScrollPhysics(), // Pour éviter le défilement de la liste imbriquée
+                  const NeverScrollableScrollPhysics(), // Enlevé le scroll des scores
               itemCount: userScores.length,
               itemBuilder: (context, index) {
                 final score = userScores[index];
@@ -152,7 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
-                      'Score: ${score}',
+                      '${score}',
                       style: TextStyle(fontSize: 14),
                     ),
                 );
@@ -165,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Dialog pour modifier l'adresse postale
+  //Popup permettant de modifier l'addresse de l'utilisateur
   void _showAddressDialog(BuildContext context) {
     final TextEditingController _tempAddressController =
         TextEditingController();
