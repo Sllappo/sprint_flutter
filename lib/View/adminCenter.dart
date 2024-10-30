@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './managementQuestions.dart';
 import './managementTests.dart';
-import './showResults.dart';
+import './resultsPage.dart';
 
 class AdminCenter extends StatelessWidget {
   const AdminCenter({super.key});

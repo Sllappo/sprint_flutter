@@ -5,7 +5,7 @@ import 'View/formRegister.dart';
 import 'View/adminCenter.dart';
 import 'View/managementQuestions.dart';
 import 'View/managementTests.dart';
-import 'View/showResults.dart';
+import 'View/resultsPage.dart';
 import 'View/quiz_page.dart';
 import 'View/categorySelectionPage.dart';
 import 'Model/candidate.dart';
@@ -36,11 +36,13 @@ class MyApp extends StatelessWidget {
         '/admin': (context) => const AdminCenter(),
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
-        '/admin/show-results': (context) => const ShowResults(),
+        '/admin/show-results': (context) => ResultsPage(),
+        '/quiz': (context) => const QuizPage(),
         '/form/profil': (context) => const ProfilePage(),
         '/quiz': (context) => QuizPage(category: "JAVA", candidat: candidat),
       },
-      home: const ProfilePage(),
+
+      home: const FormLogin(),
     );
   }
 }
