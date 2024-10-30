@@ -9,9 +9,13 @@ class ResultsPage extends StatefulWidget {
 }
 
 class _ResultsPageState extends State<ResultsPage> {
-  // on créer les variables pour la list de resultats et des noms et prenoms
   List<Results> resultsList = [];
+  List<Results> filteredResultsList = []; // Liste filtrée
   Map<String, Map<String, String>> userNames = {};
+
+  String selectedYear = 'Tous';
+  String selectedCategory = 'Tous';
+  String selectedPrenom = 'Tous';
 
   @override
   void initState() {
@@ -19,11 +23,8 @@ class _ResultsPageState extends State<ResultsPage> {
     getResultsAndName();
   }
 
-  // la fonction recuperer tout les resultat avec getAllresult
-  // elle recupere aussi tout les Users et elle recupere chaque nom et prenom de chaque User
   Future<void> getResultsAndName() async {
     var results = await getAllResults();
-
     var users = await getAllUsers();
     for (var user in users) {
       userNames[user['email']] = {
@@ -31,37 +32,111 @@ class _ResultsPageState extends State<ResultsPage> {
         'prenom': user['prenom'],
       };
     }
-    // je mets a jouer la liste avec tous les results
     setState(() {
       resultsList = results;
+      filteredResultsList = results; // Initialement, tous les résultats sont affichés
+    });
+  }
+
+  void applyFilter() {
+    setState(() {
+      filteredResultsList = resultsList.where((result) {
+        final yearMatch = selectedYear == 'Tous' || result.date.year.toString() == selectedYear;
+        final categoryMatch = selectedCategory == 'Tous' || result.category == selectedCategory;
+        final prenomMatch = selectedPrenom == 'Tous' || userNames[result.candidateMail]?['prenom'] == selectedPrenom;
+        return yearMatch && categoryMatch && prenomMatch;
+      }).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Créer les options de filtrage
+    final years = {'Tous', ...resultsList.map((r) => r.date.year.toString())};
+    final categories = {'Tous', ...resultsList.map((r) => r.category)};
+    final prenoms = {'Tous', ...userNames.values.map((u) => u['prenom'] ?? '')};
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Tous les Résultats"),
       ),
-      body: resultsList.isEmpty // si vide rond qui tourne sinon regarde combien d'element et affiche
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: resultsList.length,
-        itemBuilder: (context, index) {
-          final result = resultsList[index];
-          final userInfo = userNames[result.candidateMail];
-          final nom = userInfo?['nom'] ?? 'Inconnu'; // je peux afficher nom et prenom grace a ma variable qui a tout recuperer avant
-          final prenom = userInfo?['prenom'] ?? '';
+      body: Column(
+        children: [
+          // Filtres
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              DropdownButton<String>(
+                value: selectedYear,
+                items: years.map((year) {
+                  return DropdownMenuItem(
+                    value: year,
+                    child: Text(year),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedYear = value!;
+                  });
+                  applyFilter();
+                },
+              ),
+              DropdownButton<String>(
+                value: selectedCategory,
+                items: categories.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedCategory = value!;
+                  });
+                  applyFilter();
+                },
+              ),
+              DropdownButton<String>(
+                value: selectedPrenom,
+                items: prenoms.map((prenom) {
+                  return DropdownMenuItem(
+                    value: prenom,
+                    child: Text(prenom),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedPrenom = value!;
+                  });
+                  applyFilter();
+                },
+              ),
+            ],
+          ),
+          // Liste de résultats
+          Expanded(
+            child: filteredResultsList.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : ListView.builder(
+              itemCount: filteredResultsList.length,
+              itemBuilder: (context, index) {
+                final result = filteredResultsList[index];
+                final userInfo = userNames[result.candidateMail];
+                final nom = userInfo?['nom'] ?? 'Inconnu';
+                final prenom = userInfo?['prenom'] ?? '';
 
-          return ListTile(
-            title: Text(result.category),
-            subtitle: Text(
-              "Candidat: $nom $prenom\n"
-                  "Score: ${result.score} - Succès: ${result.success ? "Oui" : "Non"}",
+                return ListTile(
+                  title: Text(result.category),
+                  subtitle: Text(
+                    "Candidat: $nom $prenom\n"
+                        "Score: ${result.score} - Succès: ${result.success ? "Oui" : "Non"}",
+                  ),
+                  trailing: Text(result.date.toLocal().toString().split(' ')[0]),
+                );
+              },
             ),
-            trailing: Text(result.date.toLocal().toString().split(' ')[0]),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
