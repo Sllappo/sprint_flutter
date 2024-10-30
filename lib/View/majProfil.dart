@@ -17,8 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
-
-  List<Results> userScores = [];
+  List<String> userScores =[]; // Liste pour stocker les résultats de l'utilisateur
   String? _selectedOption;
   final List<String> _options = [
     'Poursuite d\'études',
@@ -30,14 +29,22 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _selectedOption = _options[0];
+    // Récuperation des données utilisateur et de ses scores
     _loadUserProfile();
   }
 
   Future<void> _loadUserProfile() async {
+    //Fonction permettant de récupérer les données de l'utilisateur ainsi que ses résultats
     try {
-      User? userProfil = await getUser('matteo@gmail.com');
-      List<Results> userScoresProfil = await getAllUserScores("matteo@gmail.com");
+      User? userProfil = await getUser(userId);//on récupère les données de l'utilisateur connecté
+      userScores = await getAllUserScores(userId);//on récupère les résultats de l'utilisateur connecté
 
+      print('Scores utilisateur chargés : $userScores');
+      setState(() {
+        //On met à jour l'état de userScore sinon l'affichage des scores ne se fait pas
+        userScores;
+        print('Scores utilisateur chargés : $userScores');
+      });
       if (userProfil != null) {
         setState(() {
           _nomController.text = userProfil.nom ?? '';
@@ -49,11 +56,15 @@ class _ProfilePageState extends State<ProfilePage> {
           userScores = userScoresProfil;
         });
       } else {
+        //Affiche l'erreur dans une snackbar
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Aucun utilisateur trouvé avec cet e-mail.')),
         );
       }
     } catch (e) {
+      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
+      //Affiche l'erreur dans une snackbar
+      print('Erreur lors du chargement du profil : $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur lors du chargement du profil: $e')),
       );
@@ -145,8 +156,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 10),
             ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,//les dimensions de la liste dépende du nombre d'éléments à afficher
+              physics:
+                  const NeverScrollableScrollPhysics(), // Enlevé le scroll des scores
               itemCount: userScores.length,
               itemBuilder: (context, index) {
                 final score = userScores[index];
@@ -154,16 +166,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.teal[50],
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 5),
-                  child: ListTile(
-                    title: Text(
-                      'Catégorie: ${score.category}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.teal),
+                  child: Text(
+                      '${score}',
+                      style: TextStyle(fontSize: 14),
                     ),
-                    subtitle: Text(
-                      'Score: ${score.score}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
                 );
               },
             ),
@@ -184,8 +190,8 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+  //Popup permettant de modifier l'addresse de l'utilisateur
 
-  // Dialog pour modifier l'adresse postale
   void _showAddressDialog(BuildContext context) {
     final TextEditingController _tempAddressController = TextEditingController();
 

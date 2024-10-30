@@ -24,11 +24,9 @@ class _FormLoginState extends State<FormLogin> {
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
-    print('On continue');
 
     bool isLoggedIn = await loginUser(email, password);
 
-    print("Le user existe ? " + isLoggedIn.toString());
 
     if (isLoggedIn) {
       print('Connexion réussie pour $email');

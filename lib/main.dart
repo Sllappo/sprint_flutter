@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => ResultsPage(),
+        '/form/profil': (context) => const ProfilePage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/quiz') {
