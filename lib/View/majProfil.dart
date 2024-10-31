@@ -46,11 +46,11 @@ class _ProfilePageState extends State<ProfilePage> {
         print('Scores utilisateur chargés : $userScores');
       });
       if (userProfil != null) {
-          _nomController.text = userProfil.nom ?? '';
-          _prenomController.text = userProfil.prenom ?? '';
-          _emailController.text = userProfil.email ?? '';
-          _ageController.text = userProfil.age?.toString() ?? '';
-          _adresseController.text = userProfil.adresse ?? '';
+    _nomController.text = userProfil.nom ?? '';
+    _prenomController.text = userProfil.prenom ?? '';
+    _emailController.text = userProfil.email ?? '';
+    _ageController.text = userProfil.age?.toString() ?? '';
+    _adresseController.text = userProfil.adresse ?? '';
           _selectedOption = userProfil.motivation ?? _options[0];
       } else {
         //Affiche l'erreur dans une snackbar
@@ -59,7 +59,6 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
     } catch (e) {
-      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
       //Affiche l'erreur dans une snackbar
       print('Erreur lors du chargement du profil : $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,6 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> refreshScore() async{
+    //Fonction qui met à jour l'état des scores
     try {
       userScores = await getAllUserScores(userId);//on rafraichit les résultats de l'utilisateur connecté
 
@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             // Affichage des scores sous forme de carte
             Text(
-              'Vos scores :',
+            'Vos scores :',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal),
             ),
             const SizedBox(height: 10),

@@ -36,9 +36,9 @@ Widget ButtonsList(BuildContext context) {
       },
     },
     {
-      'label': 'Gérer les Tests',
+      'label': 'Voir les données statistiques',
       'onPressed': () {
-        Navigator.pushNamed(context, '/admin/management-tests');
+        Navigator.pushNamed(context, '/admin/camembert-results');
       },
     },
     {
