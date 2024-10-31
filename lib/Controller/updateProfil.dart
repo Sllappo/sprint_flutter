@@ -20,10 +20,7 @@ Future<void> updateUser(String adress, String newAdresse) async {
 Future<void> updateUserMotivation(String newMotivation) async {
   final db = await connectToDb(); // Connexion à la base de données
   final collection = db.collection('users');
-
-  String userMail =
-      'encore@mail'; // Remplacez par l'email de l'utilisateur connecté
-
+  String userMail = userId; 
   try {
     await collection.updateOne(
       where.eq('email', userMail),

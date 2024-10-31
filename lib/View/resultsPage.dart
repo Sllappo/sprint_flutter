@@ -58,7 +58,6 @@ class _ResultsPageState extends State<ResultsPage> {
     final years = {'Tous', ...resultsList.map((result) => result.date.year.toString())};
     final categories = {'Tous', ...resultsList.map((category) => category.category)};
     final prenoms = {'Tous', ...userNames.values.map((user) => user['prenom'] ?? '')};
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Tous les Résultats"),
