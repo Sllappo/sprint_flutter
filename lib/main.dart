@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sprint_flutter/View/majProfil.dart';
+import 'View/CamembertPage.dart';
 import 'View/majProfil.dart'; // La page principale après connexion
 import 'View/formRegister.dart';
 import 'View/adminCenter.dart';
@@ -30,6 +32,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal), // Changement ici pour le thème
         useMaterial3: true,
       ),
+      initialRoute: '/admin/camembert-results',
       initialRoute: '/form/login',
       routes: {
         '/form/register': (context) => const FormRegister(),
@@ -45,7 +48,9 @@ class MyApp extends StatelessWidget {
         '/admin/management-questions': (context) => const ManagementQuestions(),
         '/admin/management-tests': (context) => const ManagementTests(),
         '/admin/show-results': (context) => ResultsPage(),
+        '/admin/camembert-results': (context) => CamembertPage(),
         '/form/profil': (context) => const ProfilePage(),
+
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/quiz') {
