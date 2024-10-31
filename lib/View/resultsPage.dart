@@ -9,22 +9,22 @@ class ResultsPage extends StatefulWidget {
 }
 
 class _ResultsPageState extends State<ResultsPage> {
-  // je créer deux liste de resultat une avec tous les resultats une qui va etre trier
   List<Results> resultsList = [];
   List<Results> filteredResultsList = [];
-  Map<String, Map<String, String>> userNames = {};// + une map avec tous les users
+  Map<String, Map<String, String>> userNames = {};
 
-  // pour le dropDown par defaut ca sera a tous
+// pour le dropDown par defaut ca sera a tous
   String selectedYear = 'Tous';
   String selectedCategory = 'Tous';
-  String selectedPrenom = 'Tous';
+  String prenomSearch = '';
 
   @override
   void initState() {
     super.initState();
     getResultsAndName();
   }
-// je recupére tout les resultats et pareil pour les emails et a partir des emails je recupere les prenoms
+
+  // je recupére tout les resultats et pareil pour les emails et a partir des emails je recupere les prenoms
   Future<void> getResultsAndName() async {
     var results = await getAllResults();
     var users = await getAllUsers();
@@ -35,7 +35,8 @@ class _ResultsPageState extends State<ResultsPage> {
       };
     }
     setState(() {
-      resultsList = results; // j'initialise les deux list au resultat pour l'instant
+      resultsList = results;
+      // j'initialise les deux list au resultat pour l'instant
       filteredResultsList = results;
     });
   }
@@ -46,7 +47,7 @@ class _ResultsPageState extends State<ResultsPage> {
       filteredResultsList = resultsList.where((result) {
         final yearMatch = selectedYear == 'Tous' || result.date.year.toString() == selectedYear;
         final categoryMatch = selectedCategory == 'Tous' || result.category == selectedCategory;
-        final prenomMatch = selectedPrenom == 'Tous' || userNames[result.candidateMail]?['prenom'] == selectedPrenom;
+        final prenomMatch = prenomSearch.isEmpty || (userNames[result.candidateMail]?['prenom'] ?? '').toLowerCase().contains(prenomSearch.toLowerCase());
         return yearMatch && categoryMatch && prenomMatch;
       }).toList();
     });
@@ -54,10 +55,10 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Creer des maps composer de "Tous" et l'entierter des category + User
+    // Creer des maps composer de "Tous" et l'entierter des category
     final years = {'Tous', ...resultsList.map((result) => result.date.year.toString())};
     final categories = {'Tous', ...resultsList.map((category) => category.category)};
-    final prenoms = {'Tous', ...userNames.values.map((user) => user['prenom'] ?? '')};
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Tous les Résultats"),
@@ -99,20 +100,22 @@ class _ResultsPageState extends State<ResultsPage> {
                   applyFilter();
                 },
               ),
-              DropdownButton<String>(
-                value: selectedPrenom,
-                items: prenoms.map((prenom) {
-                  return DropdownMenuItem(
-                    value: prenom,
-                    child: Text(prenom),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedPrenom = value!;
-                  });
-                  applyFilter();
-                },
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Rechercher par prénom',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        prenomSearch = value;
+                      });
+                      applyFilter();
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -126,14 +129,12 @@ class _ResultsPageState extends State<ResultsPage> {
                 final userInfo = userNames[result.candidateMail];
                 final nom = userInfo?['nom'] ?? 'Inconnu';
                 final prenom = userInfo?['prenom'] ?? '';
-                // juste la maniere d'afficher avec titre + sous titre
                 return ListTile(
                   title: Text(result.category),
                   subtitle: Text(
                     "Candidat: $nom $prenom\n"
                         "Score: ${result.score} - Succès: ${result.success ? "Oui" : "Non"}",
                   ),
-                  //trailing permet de mettre a droite une variate de subtile etc
                   trailing: Text(result.date.toLocal().toString().split(' ')[0]),
                 );
               },
