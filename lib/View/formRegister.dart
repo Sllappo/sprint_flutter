@@ -4,7 +4,6 @@ import '../Controller/emailVerification.dart';
 import '../Model/user.dart';
 import '../Model/candidate.dart';
 
-
 class FormRegister extends StatefulWidget {
   const FormRegister({super.key});
 
@@ -15,7 +14,6 @@ class FormRegister extends StatefulWidget {
 class _FormRegisterState extends State<FormRegister> {
   final _formKey = GlobalKey<FormState>();
 
-  // variable qui prend en compte les infos des inputs du form
   final TextEditingController _nomController = TextEditingController();
   final TextEditingController _prenomController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -23,7 +21,6 @@ class _FormRegisterState extends State<FormRegister> {
   final TextEditingController _adresseController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  // list pour le menu deroulant
   String? _motivation;
   final List<String> _motivations = [
     'Poursuite d’étude',
@@ -31,20 +28,17 @@ class _FormRegisterState extends State<FormRegister> {
     'Réorientation'
   ];
 
-  // Fonction qui soumet le formulaire
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final String email = _emailController.text;
-      userId= email;
+      userId = email;
 
-      // Vérifiez si l'email deja existant
       bool emailAvailable = await isEmailAvailable(email);
       if (!emailAvailable) {
         print('Cet email est déjà utilisé. Veuillez en choisir un autre.');
         return;
       }
 
-      // Récupérez les valeurs du formulaire
       final String nom = _nomController.text;
       final String prenom = _prenomController.text;
       final int? age = int.tryParse(_ageController.text);
@@ -52,7 +46,6 @@ class _FormRegisterState extends State<FormRegister> {
       final String password = _passwordController.text;
       final String? motivation = _motivation;
 
-      // Créez un nouvel utilisateur
       User newUser = User(
         nom: nom,
         prenom: prenom,
@@ -68,10 +61,8 @@ class _FormRegisterState extends State<FormRegister> {
         insertUser(newUser);
         print('Inscription réussie pour $nom avec la motivation $_motivation');
 
-        // Créez un candidat basé sur l'utilisateur
-        Candidat candidat = Candidat(nom); // Utilisation correcte du constructeur
+        Candidat candidat = Candidat(nom);
 
-        // Redirection vers la page de sélection de catégories avec le candidat
         Navigator.pushReplacementNamed(context, '/categories', arguments: candidat);
       } catch (e) {
         print(e);
@@ -80,165 +71,227 @@ class _FormRegisterState extends State<FormRegister> {
       print('Veuillez remplir tous les champs');
     }
   }
-  // Regex pour validation email et mot de passe
+
   final RegExp emailRegex = RegExp(r".+@.+");
   final RegExp passwordRegex = RegExp(r"^(?=.*[A-Z])(?=.*[!@#\$&*~]).{6,}$");
 
-  // Validator sous chaque Label pour verifier si c'est vide ou si le type est respecter
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inscription'),
+        backgroundColor: Colors.teal,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _nomController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nom',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre nom';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _prenomController,
-                    decoration: const InputDecoration(
-                      labelText: 'Prénom',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre prénom';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre email';
-                      } else if (!emailRegex.hasMatch(value)) {
-                        return 'Veuillez entrer un email valide';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _ageController,
-                    decoration: const InputDecoration(
-                      labelText: 'Âge',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre âge';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'Veuillez entrer un âge valide';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _adresseController,
-                    decoration: const InputDecoration(
-                      labelText: 'Adresse Postale',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre adresse postale';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Mot de passe',
-                      border: OutlineInputBorder(),
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer un mot de passe';
-                      } else if (!passwordRegex.hasMatch(value)) {
-                        return 'Le mot de passe ne correspond pas aux normes';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: 'Motivation',
-                      border: OutlineInputBorder(),
-                    ),
-                    value: _motivation,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _motivation = newValue;
-                      });
-                    },
-                    items: _motivations.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez sélectionner une motivation';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _submitForm,
-                      child: const Text('S\'inscrire'),
-
-                    ),
-                  ),
-                ],
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                'Rejoignez Le Quiz de Compétences !',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/form/login');
-                },
-                child: const Text('Déjà inscrit ? Connectez-vous'), // redirige vers la page Login
+              const SizedBox(height: 20),
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          controller: _nomController,
+                          decoration: InputDecoration(
+                            labelText: 'Nom',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre nom';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _prenomController,
+                          decoration: InputDecoration(
+                            labelText: 'Prénom',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre prénom';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: const Icon(Icons.email, color: Colors.teal),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre email';
+                            } else if (!emailRegex.hasMatch(value)) {
+                              return 'Veuillez entrer un email valide';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _ageController,
+                          decoration: InputDecoration(
+                            labelText: 'Âge',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: const Icon(Icons.calendar_today, color: Colors.teal),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre âge';
+                            }
+                            if (int.tryParse(value) == null) {
+                              return 'Veuillez entrer un âge valide';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _adresseController,
+                          decoration: InputDecoration(
+                            labelText: 'Adresse Postale',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: const Icon(Icons.home, color: Colors.teal),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre adresse postale';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Mot de passe',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: const Icon(Icons.lock, color: Colors.teal),
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer un mot de passe';
+                            } else if (!passwordRegex.hasMatch(value)) {
+                              return 'Le mot de passe ne correspond pas aux normes';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: 'Motivation',
+                            labelStyle: TextStyle(color: Colors.teal.shade700),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          value: _motivation,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _motivation = newValue;
+                            });
+                          },
+                          items: _motivations.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez sélectionner une motivation';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: _submitForm,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'S\'inscrire',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/form/login');
+                  },
+                  child: const Text(
+                    'Déjà inscrit ? Connectez-vous',
+                    style: TextStyle(color: Colors.teal),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
