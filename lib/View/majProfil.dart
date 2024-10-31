@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
       print('Scores utilisateur chargés : $userScores');
       setState(() {
         //On met à jour l'état de userScore sinon l'affichage des scores ne se fait pas
-        userScores;
+        userScores ;
         print('Scores utilisateur chargés : $userScores');
       });
       if (userProfil != null) {
@@ -64,6 +64,25 @@ class _ProfilePageState extends State<ProfilePage> {
       print('Erreur lors du chargement du profil : $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur lors du chargement du profil: $e')),
+      );
+    }
+  }
+
+  Future<void> refreshScore() async{
+    try {
+      userScores = await getAllUserScores(userId);//on rafraichit les résultats de l'utilisateur connecté
+
+      print('Scores utilisateur chargés : $userScores');
+      setState(() {
+        //On met à jour l'état de userScore sinon l'affichage des scores ne se fait pas
+        userScores ;
+        print('Scores utilisateur chargés : $userScores');
+      });
+    } catch (e) {
+      //Affiche l'erreur dans une snackbar
+      print('Erreur lors du raffraichissement des résultats : $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du raffraichissement des résultats : $e')),
       );
     }
   }
@@ -107,13 +126,13 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
 
             // Formulaire de mise à jour du profil
-            _buildProfileField(_nomController, 'Nom'),
+            _buildProfileField(_nomController, 'Nom', isReadOnly: true),
             const SizedBox(height: 10),
-            _buildProfileField(_prenomController, 'Prénom'),
+            _buildProfileField(_prenomController, 'Prénom', isReadOnly: true),
             const SizedBox(height: 10),
             _buildProfileField(_emailController, 'E-mail', isReadOnly: true),
             const SizedBox(height: 10),
-            _buildProfileField(_ageController, 'Âge'),
+            _buildProfileField(_ageController, 'Âge', isReadOnly: true),
             const SizedBox(height: 10),
 
             // Adresse avec option de modification
@@ -169,7 +188,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                 );
               },
-            ),
+            ),ElevatedButton(onPressed: () => refreshScore(),
+                child: Text("Refresh"))
           ],
         ),
       ),
