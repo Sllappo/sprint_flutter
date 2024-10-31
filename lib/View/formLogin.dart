@@ -31,13 +31,13 @@ class _FormLoginState extends State<FormLogin> {
     if (isLoggedIn) {
       print('Connexion réussie pour $email');
       final User currentUser = await getUser(email);
-
+      userId = currentUser.email;
       widget.onLoginSuccess();
 
       if (currentUser.admin) {
         Navigator.pushReplacementNamed(context, '/admin');
       } else {
-        Navigator.pushReplacementNamed(context, '/form/profil');
+        Navigator.pushReplacementNamed(context, '/quiz');
       }
     } else {
       print('Email ou mot de passe incorrect');

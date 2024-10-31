@@ -46,15 +46,12 @@ class _ProfilePageState extends State<ProfilePage> {
         print('Scores utilisateur chargés : $userScores');
       });
       if (userProfil != null) {
-        setState(() {
           _nomController.text = userProfil.nom ?? '';
           _prenomController.text = userProfil.prenom ?? '';
           _emailController.text = userProfil.email ?? '';
           _ageController.text = userProfil.age?.toString() ?? '';
           _adresseController.text = userProfil.adresse ?? '';
           _selectedOption = userProfil.motivation ?? _options[0];
-          userScores = userScoresProfil;
-        });
       } else {
         //Affiche l'erreur dans une snackbar
         ScaffoldMessenger.of(context).showSnackBar(

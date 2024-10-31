@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal), // Changement ici pour le thème
         useMaterial3: true,
       ),
-      initialRoute: '/admin/camembert-results',
       initialRoute: '/form/login',
       routes: {
         '/form/register': (context) => const FormRegister(),
