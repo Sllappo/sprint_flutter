@@ -18,7 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _adresseController = TextEditingController();
   List<String> userScores =[]; // Liste pour stocker les résultats de l'utilisateur
-
   String? _selectedOption;
   final List<String> _options = [
     'Poursuite d\'études',
@@ -41,28 +40,25 @@ class _ProfilePageState extends State<ProfilePage> {
       userScores = await getAllUserScores(userId);//on récupère les résultats de l'utilisateur connecté
 
       print('Scores utilisateur chargés : $userScores');
-
       setState(() {
         //On met à jour l'état de userScore sinon l'affichage des scores ne se fait pas
-        userScores;
+        userScores ;
         print('Scores utilisateur chargés : $userScores');
       });
       if (userProfil != null) {
-        _nomController.text = userProfil.nom ?? '';
-        _prenomController.text = userProfil.prenom ?? '';
-        _emailController.text = userProfil.email ?? '';
-        _ageController.text = userProfil.age?.toString() ?? '';
-        _adresseController.text = userProfil.adresse ?? '';
-        _selectedOption = userProfil.motivation ?? _options[0];
+    _nomController.text = userProfil.nom ?? '';
+    _prenomController.text = userProfil.prenom ?? '';
+    _emailController.text = userProfil.email ?? '';
+    _ageController.text = userProfil.age?.toString() ?? '';
+    _adresseController.text = userProfil.adresse ?? '';
+          _selectedOption = userProfil.motivation ?? _options[0];
       } else {
         //Affiche l'erreur dans une snackbar
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Aucun utilisateur trouvé avec cet e-mail.')),
+          const SnackBar(content: Text('Aucun utilisateur trouvé avec cet e-mail.')),
         );
       }
     } catch (e) {
-      print('Erreur lors du chargement du profil : $e'); // Déboguer l'erreur
       //Affiche l'erreur dans une snackbar
       print('Erreur lors du chargement du profil : $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,52 +67,75 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> refreshScore() async{
+    //Fonction qui met à jour l'état des scores
+    try {
+      userScores = await getAllUserScores(userId);//on rafraichit les résultats de l'utilisateur connecté
+
+      print('Scores utilisateur chargés : $userScores');
+      setState(() {
+        //On met à jour l'état de userScore sinon l'affichage des scores ne se fait pas
+        userScores ;
+        print('Scores utilisateur chargés : $userScores');
+      });
+    } catch (e) {
+      //Affiche l'erreur dans une snackbar
+      print('Erreur lors du raffraichissement des résultats : $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du raffraichissement des résultats : $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: const Text('Mon Profil'),
+        backgroundColor: Colors.teal,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: <Widget>[
-            TextField(
-              controller: _nomController,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Nom',
-                border: OutlineInputBorder(),
+            // Carte d'entête de profil
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              elevation: 6,
+              color: Colors.teal[50],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "${_prenomController.text} ${_nomController.text}",
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _emailController.text,
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
             ),
+            const SizedBox(height: 20),
+
+            // Formulaire de mise à jour du profil
+            _buildProfileField(_nomController, 'Nom', isReadOnly: true),
             const SizedBox(height: 10),
-            TextField(
-              controller: _prenomController,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Prénom',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            _buildProfileField(_prenomController, 'Prénom', isReadOnly: true),
             const SizedBox(height: 10),
-            TextField(
-              controller: _emailController,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'E-mail',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            _buildProfileField(_emailController, 'E-mail', isReadOnly: true),
             const SizedBox(height: 10),
-            TextField(
-              controller: _ageController,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Âge',
-                border: OutlineInputBorder(),
-              ),
-            ),
+            _buildProfileField(_ageController, 'Âge', isReadOnly: true),
             const SizedBox(height: 10),
+
+            // Adresse avec option de modification
             TextField(
               controller: _adresseController,
               readOnly: true,
@@ -130,6 +149,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 10),
+
+            // Motivation avec option de modification
             TextField(
               readOnly: true,
               decoration: InputDecoration(
@@ -143,13 +164,13 @@ class _ProfilePageState extends State<ProfilePage> {
               controller: TextEditingController(text: _selectedOption),
             ),
             const SizedBox(height: 20),
-            // Afficher les scores avec une meilleure présentation
+
+            // Affichage des scores sous forme de carte
             Text(
-              'Vos scores :',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            'Vos scores :',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal),
             ),
             const SizedBox(height: 10),
-            // Utiliser une liste pour afficher les scores
             ListView.builder(
               shrinkWrap: true,//les dimensions de la liste dépende du nombre d'éléments à afficher
               physics:
@@ -158,6 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
               itemBuilder: (context, index) {
                 final score = userScores[index];
                 return Card(
+                  color: Colors.teal[50],
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
@@ -166,18 +188,29 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                 );
               },
-            ),
-            const SizedBox(height: 20),
+            ),ElevatedButton(onPressed: () => refreshScore(),
+                child: Text("Refresh"))
           ],
         ),
       ),
     );
   }
 
+  // Fonction de champ de profil pour simplifier la mise en page
+  Widget _buildProfileField(TextEditingController controller, String label, {bool isReadOnly = false}) {
+    return TextField(
+      controller: controller,
+      readOnly: isReadOnly,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+    );
+  }
   //Popup permettant de modifier l'addresse de l'utilisateur
+
   void _showAddressDialog(BuildContext context) {
-    final TextEditingController _tempAddressController =
-        TextEditingController();
+    final TextEditingController _tempAddressController = TextEditingController();
 
     showDialog(
       context: context,
@@ -193,31 +226,16 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () =>
-                  Navigator.of(context).pop(), // Fermer le dialogue
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('Annuler'),
             ),
             ElevatedButton(
               onPressed: () async {
-                try {
-                  // Appeler la fonction pour mettre à jour l'utilisateur
-                  await updateUser(
-                      _adresseController.text, _tempAddressController.text);
-
-                  // Mettre à jour l'état local
-                  setState(() {
-                    _adresseController.text = _tempAddressController.text;
-                  });
-
-                  Navigator.of(context).pop(); // Fermer le dialogue
-                } catch (e) {
-                  // Afficher un message d'erreur si la mise à jour échoue
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            'Erreur lors de la mise à jour de l\'adresse: $e')),
-                  );
-                }
+                await updateUser(_adresseController.text, _tempAddressController.text);
+                setState(() {
+                  _adresseController.text = _tempAddressController.text;
+                });
+                Navigator.of(context).pop();
               },
               child: const Text('Enregistrer'),
             ),
@@ -229,7 +247,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Dialog pour modifier la motivation avec menu déroulant
   void _showOptionDialog(BuildContext context) {
-    // Initialisez avec la valeur actuelle de l'option sélectionnée
     String? tempSelectedOption = _selectedOption;
 
     showDialog(
@@ -238,9 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return AlertDialog(
           title: const Text('Modifier ma motivation'),
           content: DropdownButton<String>(
-            value: _options.contains(tempSelectedOption)
-                ? tempSelectedOption
-                : _options[0],
+            value: _options.contains(tempSelectedOption) ? tempSelectedOption : _options[0],
             isExpanded: true,
             onChanged: (String? newValue) {
               setState(() {
@@ -257,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Fermer le dialogue
+                Navigator.of(context).pop();
               },
               child: const Text('Annuler'),
             ),
@@ -265,13 +280,9 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 updateUserMotivation(tempSelectedOption!);
                 setState(() {
-                  _selectedOption =
-                      tempSelectedOption; // Met à jour la sélection
+                  _selectedOption = tempSelectedOption;
                 });
-
-                // Appelez ici la fonction pour mettre à jour la motivation en base de données
-
-                Navigator.of(context).pop(); // Fermer le dialogue
+                Navigator.of(context).pop();
               },
               child: const Text('Enregistrer'),
             ),
