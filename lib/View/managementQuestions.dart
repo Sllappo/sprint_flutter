@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:sprint_flutter/Model/quizz.dart';
 import '../Controller/createNewQuestion.dart';
 import '../Controller/questionController.dart';
-
 // Fonction pour récupérer les quizz dans la table quiz
 Future<List<Quiz>> fetchQuizz() async {
   List<Map<String, dynamic>> quizzListJson = await getAllQuizz();
@@ -22,7 +21,7 @@ class ManagementQuestions extends StatefulWidget {
 
 
 class _ManagementQuestionsState extends State<ManagementQuestions> {
-  String selectedCategory = "HTML"; // Stocker la catégorie de question à afficher (HTML par défaut)
+  static String selectedCategory = "HTML"; // Stocker la catégorie de question à afficher (HTML par défaut)
 
   void updateCategory(String category) { // State pour mettre à jour la catégorie à afficher
     setState(() {
@@ -78,11 +77,17 @@ Widget NavBar(String selectedCategory, Function(String) updateCategory) {
   );
 }
 
-// Card qui affiche une question et ses réponses
-class QuizCard extends StatelessWidget {
+class QuizCard extends StatefulWidget{
   final String selectedCategory; // catégorie selectionnée
-
   const QuizCard({required this.selectedCategory});
+
+  @override
+  QuizCardState createState() => QuizCardState();
+}
+// Card qui affiche une question et ses réponses
+class QuizCardState extends State<QuizCard> {
+late String selectedCategoryState;
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +102,7 @@ class QuizCard extends StatelessWidget {
         } else if (snapshot.hasData) {
           // Filtrer les questions selon la catégorie selectionné
           final filteredQuizzes = snapshot.data!
-              .where((quiz) => quiz.category == selectedCategory)
+              .where((quiz) => quiz.category == widget.selectedCategory )
               .toList();
 
           return ListView(
@@ -137,7 +142,9 @@ class QuizCard extends StatelessWidget {
                         ),
                       );
                     }).toList(),
-                    IconButton(onPressed: () => deleteQuestion(item) , icon: const Icon(Icons.delete)),//boutton de suppression de la question
+                    IconButton(onPressed: () => setState(() {
+                      deleteQuestion(item);
+                    }), icon: const Icon(Icons.delete)),//boutton de suppression de la question
                   ],
                 ),
               );
