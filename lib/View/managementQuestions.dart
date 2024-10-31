@@ -1,6 +1,7 @@
 import 'package:sprint_flutter/Controller/getAllQuizz.dart';
 import 'package:flutter/material.dart';
 import 'package:sprint_flutter/Model/quizz.dart';
+import '../Controller/createNewQuestion.dart';
 
 // Fonction pour récupérer les quizz dans la table quiz
 Future<List<Quiz>> fetchQuizz() async {
@@ -35,7 +36,7 @@ class _ManagementQuestionsState extends State<ManagementQuestions> {
         title: const Text('Gestions des questions'),
         backgroundColor: Colors.blue,
         actions: [
-          IconButton(onPressed: ()=>{}, icon: Icon(Icons.add))
+          IconButton(onPressed: ()=>{showFormCreateQuestion(context)}, icon: Icon(Icons.add))
         ],
       ),
       
