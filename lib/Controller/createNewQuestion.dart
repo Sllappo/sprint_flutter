@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Model/quizz.dart';
-import '../Controller/insertQuestion.dart';
+import '../Controller/questionController.dart';
 
 void showFormCreateQuestion(BuildContext context) {
   final formKey = GlobalKey<FormState>();
@@ -25,7 +25,9 @@ void showFormCreateQuestion(BuildContext context) {
   bool isAnswer4Correct = false;
 
   void submitQuestion() async{
+    //Fonctions pour soumettre la création de question
     if (formKey.currentState!.validate()) {
+      //Après vérification de la validité du formulaire on récupère les valeur de ce dernier
       String question = questionController.text;
       List<int> answers = [];
       List<String> choices = [
@@ -34,7 +36,6 @@ void showFormCreateQuestion(BuildContext context) {
         answer3Controller.text,
         answer4Controller.text
       ];
-
       if (isAnswer1Correct) {
         answers.add(0);
       }
@@ -49,17 +50,16 @@ void showFormCreateQuestion(BuildContext context) {
       }
       List<Question> newQuestion = [];
       newQuestion.add(Question(text: question, choices: choices, answer: answers));
+      //On transforme tout ces valeurs en un objet Quiz que l'on pourra envoyer en bdd
       Quiz newQuiz = Quiz(questions: newQuestion, category: category!);
 
       try {
+        //on insère la question
         insertQuestion(newQuiz);
         print('Inscription réussie pour $category');
       } catch (e) {
         print(e);
       }
-
-      print(
-          "category: $category ,question: $question , answers: $answers , choices: $choices");
     }
   }
 

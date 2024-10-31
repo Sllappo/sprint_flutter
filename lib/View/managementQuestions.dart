@@ -2,6 +2,7 @@ import 'package:sprint_flutter/Controller/getAllQuizz.dart';
 import 'package:flutter/material.dart';
 import 'package:sprint_flutter/Model/quizz.dart';
 import '../Controller/createNewQuestion.dart';
+import '../Controller/questionController.dart';
 
 // Fonction pour récupérer les quizz dans la table quiz
 Future<List<Quiz>> fetchQuizz() async {
@@ -136,6 +137,7 @@ class QuizCard extends StatelessWidget {
                         ),
                       );
                     }).toList(),
+                    IconButton(onPressed: () => deleteQuestion(item) , icon: const Icon(Icons.delete)),//boutton de suppression de la question
                   ],
                 ),
               );
