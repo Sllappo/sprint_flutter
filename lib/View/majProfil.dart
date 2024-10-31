@@ -46,12 +46,12 @@ class _ProfilePageState extends State<ProfilePage> {
         print('Scores utilisateur chargés : $userScores');
       });
       if (userProfil != null) {
-          _nomController.text = userProfil.nom ?? '';
-          _prenomController.text = userProfil.prenom ?? '';
-          _emailController.text = userProfil.email ?? '';
-          _ageController.text = userProfil.age?.toString() ?? '';
-          _adresseController.text = userProfil.adresse ?? '';
-          _selectedOption = userProfil.motivation ?? _options[0];
+        _nomController.text = userProfil.nom ?? '';
+        _prenomController.text = userProfil.prenom ?? '';
+        _emailController.text = userProfil.email ?? '';
+        _ageController.text = userProfil.age?.toString() ?? '';
+        _adresseController.text = userProfil.adresse ?? '';
+        _selectedOption = userProfil.motivation ?? _options[0];
       } else {
         //Affiche l'erreur dans une snackbar
         ScaffoldMessenger.of(context).showSnackBar(
@@ -155,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ListView.builder(
               shrinkWrap: true,//les dimensions de la liste dépende du nombre d'éléments à afficher
               physics:
-                  const NeverScrollableScrollPhysics(), // Enlevé le scroll des scores
+              const NeverScrollableScrollPhysics(), // Enlevé le scroll des scores
               itemCount: userScores.length,
               itemBuilder: (context, index) {
                 final score = userScores[index];
@@ -164,9 +164,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
-                      '${score}',
-                      style: TextStyle(fontSize: 14),
-                    ),
+                    '${score}',
+                    style: TextStyle(fontSize: 14),
+                  ),
                 );
               },
             ),

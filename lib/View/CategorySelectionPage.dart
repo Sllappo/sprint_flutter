@@ -13,9 +13,39 @@ class CategorySelectionPage extends StatefulWidget {
 
 class _CategorySelectionPageState extends State<CategorySelectionPage> {
   final List<String> categories = ["HTML", "CSS", "ALGO", "JAVA"];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCompletedCategories();
+  }
+
+  Future<void> _loadCompletedCategories() async {
+    // Charge les tests déjà complétés depuis la BDD
+    await widget.candidat.chargerTestsEffectues();
+
+    // Met à jour l'état pour reconstruire l'interface avec les données chargées
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      // Affiche un indicateur de chargement pendant le chargement des catégories
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Sélection de catégorie"),
+          backgroundColor: Colors.teal,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sélection de catégorie"),
@@ -25,10 +55,10 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Nombre de colonnes
-            crossAxisSpacing: 16.0, // Espace horizontal entre les éléments
-            mainAxisSpacing: 16.0, // Espace vertical entre les éléments
-            childAspectRatio: 1.2, // Ratio de forme des éléments
+            crossAxisCount: 2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0,
+            childAspectRatio: 1.2,
           ),
           itemCount: categories.length,
           itemBuilder: (context, index) {
@@ -36,9 +66,9 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
             bool isCompleted = !widget.candidat.peutPasserTest(category);
 
             return Card(
-              elevation: 4, // Ombre de la carte
+              elevation: 4,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // Coins arrondis
+                borderRadius: BorderRadius.circular(10),
               ),
               child: InkWell(
                 onTap: isCompleted
@@ -64,7 +94,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.quiz, // Vous pouvez remplacer ceci par une icône personnalisée
+                        Icons.quiz,
                         size: 40,
                         color: isCompleted ? Colors.grey : Colors.teal,
                       ),

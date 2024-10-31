@@ -61,7 +61,7 @@ class _FormRegisterState extends State<FormRegister> {
         insertUser(newUser);
         print('Inscription réussie pour $nom avec la motivation $_motivation');
 
-        Candidat candidat = Candidat(nom);
+        Candidat candidat = Candidat(nom, userId);
 
         Navigator.pushReplacementNamed(context, '/categories', arguments: candidat);
       } catch (e) {

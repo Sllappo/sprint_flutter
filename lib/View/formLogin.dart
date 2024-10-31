@@ -4,13 +4,14 @@ import '../Controller/loginVerification.dart';
 import '../Model/user.dart';
 
 class FormLogin extends StatefulWidget {
-  final VoidCallback onLoginSuccess;
+  final Function(String userId) onLoginSuccess;
 
   const FormLogin({super.key, required this.onLoginSuccess});
 
   @override
   State<FormLogin> createState() => _FormLoginState();
 }
+
 
 class _FormLoginState extends State<FormLogin> {
   final _formKey = GlobalKey<FormState>();
@@ -24,20 +25,24 @@ class _FormLoginState extends State<FormLogin> {
     final String email = _emailController.text;
     final String password = _passwordController.text;
 
-
+    // Attempt login
     bool isLoggedIn = await loginUser(email, password);
-
 
     if (isLoggedIn) {
       print('Connexion réussie pour $email');
-      final User currentUser = await getUser(email);
-      userId = currentUser.email;
-      widget.onLoginSuccess();
 
+      // Get the current user details
+      final User currentUser = await getUser(email);
+      String userId = currentUser.email;
+
+      // Call onLoginSuccess with userId
+      widget.onLoginSuccess(userId);
+
+      // Navigate based on user role
       if (currentUser.admin) {
         Navigator.pushReplacementNamed(context, '/admin');
       } else {
-        Navigator.pushReplacementNamed(context, '/quiz');
+        Navigator.pushReplacementNamed(context, '/quiz', arguments: userId);
       }
     } else {
       print('Email ou mot de passe incorrect');
@@ -46,6 +51,7 @@ class _FormLoginState extends State<FormLogin> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

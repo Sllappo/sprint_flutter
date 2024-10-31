@@ -4,13 +4,35 @@ import '../Model/user.dart';
 
 class Candidat {
   final String nom;
+  String? userId; // Make userId nullable
   final Map<String, int> scores = {};
   final Set<String> testsEffectues = {};
 
-  Candidat(this.nom);
+  Candidat(this.nom, [this.userId]);
+
+  /// Initialise les tests déjà effectués depuis la BDD
+  Future<void> chargerTestsEffectues() async {
+    final db = await connectToDb();
+    final resultsCollection = db.collection('results');
+
+    try {
+      final tests = await resultsCollection
+          .find(where.eq('candidateMail', userId))
+          .toList();
+
+      for (var test in tests) {
+        testsEffectues.add(test['category']);
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des tests effectués: $e');
+    } finally {
+      await db.close();
+    }
+  }
 
   bool peutPasserTest(String discipline) => !testsEffectues.contains(discipline);
 
+  /// Ajoute le score pour une discipline et enregistre dans la BDD
   Future<void> ajouterScore(String discipline, int score) async {
     scores[discipline] = score;
     testsEffectues.add(discipline);

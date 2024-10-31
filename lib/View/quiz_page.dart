@@ -99,19 +99,26 @@ class _QuizPageState extends State<QuizPage> {
     });
   }
 
-  void _showResults() {
+  Future<void> _showResults() async {
+    // Annule le timer pour éviter d'autres exécutions
     timer?.cancel();
-    widget.candidat.ajouterScore(widget.category, test.score);
 
+    // Attend l'ajout du score dans la base de données
+    await widget.candidat.ajouterScore(widget.category, test.score);
+
+    // Vérifie si toutes les catégories sont complétées après la mise à jour
     bool allCategoriesCompleted = widget.candidat.testsEffectues.length == 4;
 
+    // Affiche le score final dans une boîte de dialogue
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Résultats"),
         content: Text(
           "Score final pour ${widget.category}: ${test.score}/${test.questions.length}" +
-              (allCategoriesCompleted ? "\nScore général : ${widget.candidat.scores.values.reduce((a, b) => a + b)}" : ""),
+              (allCategoriesCompleted
+                  ? "\nScore général : ${widget.candidat.scores.values.reduce((a, b) => a + b)}"
+                  : ""),
         ),
         actions: [
           TextButton(

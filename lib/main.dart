@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sprint_flutter/View/majProfil.dart';
 import 'View/CamembertPage.dart';
-import 'View/majProfil.dart'; // La page principale après connexion
+import 'View/majProfil.dart';
 import 'View/formRegister.dart';
 import 'View/adminCenter.dart';
 import 'View/managementQuestions.dart';
@@ -20,26 +20,26 @@ void main() {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  final Candidat candidat = Candidat("Candidat");
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal), // Changement ici pour le thème
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
       initialRoute: '/form/login',
       routes: {
         '/form/register': (context) => const FormRegister(),
-        '/form/login': (context) => FormLogin(onLoginSuccess: () {
+        '/form/login': (context) => FormLogin(onLoginSuccess: (String userId) {
+          // Create an instance of Candidat with the correct name and userId after login
+          final Candidat loggedInCandidat = Candidat("Candidat", userId);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    HomeScreen(candidat: candidat)),
+              builder: (context) => HomeScreen(candidat: loggedInCandidat),
+            ),
           );
         }),
         '/admin': (context) => const AdminCenter(),
@@ -48,7 +48,6 @@ class MyApp extends StatelessWidget {
         '/admin/show-results': (context) => ResultsPage(),
         '/admin/camembert-results': (context) => CamembertPage(),
         '/form/profil': (context) => const ProfilePage(),
-
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/quiz') {
@@ -89,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _pages = [
-      const ProfilePage(), // Page de profil
+      const ProfilePage(), // Profil page
       CategorySelectionPage(candidat: widget.candidat),
     ];
   }
@@ -110,10 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.teal, // Couleur de l'élément sélectionné
-        unselectedItemColor: Colors.grey[700], // Couleur des éléments non sélectionnés
-        showSelectedLabels: true, // Afficher les labels sélectionnés
-        showUnselectedLabels: true, // Afficher les labels non sélectionnés
+        selectedItemColor: Colors.teal, // Selected item color
+        unselectedItemColor: Colors.grey[700], // Unselected item color
+        showSelectedLabels: true, // Show selected labels
+        showUnselectedLabels: true, // Show unselected labels
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
