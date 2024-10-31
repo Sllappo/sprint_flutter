@@ -23,15 +23,15 @@ class User {
     required this.admin,
   });
   Map<String, dynamic> toJson() => {
-        "nom": nom,
-        "prenom": prenom,
-        "email": email,
-        "age": age,
-        "adresse": adresse,
-        "password": password,
-        "motivation": motivation,
-        "admin": false,
-      };
+    "nom": nom,
+    "prenom": prenom,
+    "email": email,
+    "age": age,
+    "adresse": adresse,
+    "password": password,
+    "motivation": motivation,
+    "admin": false,
+  };
 
   factory User.fromJson(Map<String, dynamic> userMap) {
     return User(

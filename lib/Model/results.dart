@@ -7,18 +7,18 @@ class Results {
 
   Results(
       {required this.candidateMail,
-      required this.category,
-      required this.score,
-      required this.success,
-      required this.date});
+        required this.category,
+        required this.score,
+        required this.success,
+        required this.date});
 
   Map<String, dynamic> toJson() => {
-        "candidateMail": candidateMail,
-        "category": category,
-        "score": score,
-        "success": success,
-        "date": DateTime.now(),
-      };
+    "candidateMail": candidateMail,
+    "category": category,
+    "score": score,
+    "success": success,
+    "date": DateTime.now(),
+  };
 
   factory Results.fromJson(Map<String, dynamic> userResultMap) {
     return Results(
