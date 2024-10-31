@@ -1,5 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../database.dart';
+import '../Model/user.dart';
 
 class Candidat {
   final String nom;
@@ -21,7 +22,7 @@ class Candidat {
 
     try {
       await resultsCollection.insertOne({
-        'candidateMail': nom,
+        'candidateMail': userId,
         'category': discipline,
         'score': score,
         'success': success,

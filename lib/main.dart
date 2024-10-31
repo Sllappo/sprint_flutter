@@ -10,7 +10,6 @@ import 'View/managementTests.dart';
 import 'View/resultsPage.dart';
 import 'View/quiz_page.dart';
 import 'View/categorySelectionPage.dart';
-import 'View/majProfil.dart';
 import 'Model/candidate.dart';
 import 'View/formLogin.dart';
 
